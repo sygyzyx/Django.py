@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{%static 'bookdetails.css'%}">
+</head>
+
+<body>
+    <div class="bookDetails">
+        Book Name :{{Book.BookName}}
+        <br>
+        Book Price :{{Book.BookPrice}}
+        <br>
+        Author :{{Book.Author}}
+        <br>
+        <form action={% url 'edit' Book.BookId %}>
+            {% if request.user.username == Book.User.username %}
+            <button>Edit</button>
+            {% else %}
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>
+{% endblock body %}

@@ -1,0 +1,17 @@
+body{
+    background: linear-gradient(to left, rgb(143, 192, 222),rgb(143, 222, 190));
+}
+.col{
+    margin: 20px;
+    border-radius: 20px;
+    background-color: aqua;
+}
+.buttonSubmit{
+    float: right;
+}
+.BookLabel{
+    margin:10px;
+}
+.bookInputField{
+    margin: 10px;
+}

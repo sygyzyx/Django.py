@@ -1,0 +1,15 @@
+body{
+    background-image: linear-gradient(to left, rgb(0, 255, 200), rgb(255, 192, 217));
+}
+.mainContainer{
+    margin: 100px 300px;
+}
+
+.submitBtn{
+    padding: 300px;
+    position:relative;
+    right: 100px;    
+}
+button{
+    border: none;
+}

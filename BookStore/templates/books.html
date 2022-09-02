@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{%load static%}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    <link rel="stylesheet" href="{%static 'books.css'%}">
+</head>
+
+<body>
+    <div class="row">
+        <div class="col" id="newBookEntry">
+            <form method="POST" autocomplete='off'>
+                {% csrf_token %}
+                <h4>Add New Books</h4>
+                <div class="row">
+                    <div class="col">
+                        <div class="col">
+                            <div class="BookLabel">Book Name</div>
+                            <div class="BookLabel">Book Price</div>
+                            <div class="BookLabel">Author</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="col">
+                            <div class="bookInputField">
+                                <input type="text" name='BookName'>
+                            </div>
+                            <div class="bookInputField">
+                                <input type="text" name='BookPrice'>
+                            </div>
+                            <div class="bookInputField">{{form.Author}}</div>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class='buttonSubmit' onclick=clicked()>Submit</button>
+            </form>
+        </div>
+
+        <div class="col">
+            {%for i in bookList%}
+            {% csrf_token %}
+            <form action={% url 'delete' i.BookId %} method="POST">
+                {% csrf_token %}
+                <div class="listOfBooks">
+                    <div class="bookName">
+                        {{i.BookName}}
+                    </div>
+                    <button action='Submit'> Delete </button>
+            </form>
+            <form action={% url 'detail' i.BookId %} method="POST">
+                {% csrf_token %}
+                <button>Details</button>
+            </form>
+            <br>
+        </div>
+        </form>
+        {% endfor %}
+    </div>
+</body>
+</html>
+{% endblock body %}

@@ -1,0 +1,11 @@
+.main{
+    margin: 0px 20px;
+    padding: 0px;
+}
+body{
+    background: linear-gradient(to left, rgb(192, 222, 143),rgb(222, 176, 143));
+}
+input{
+    width: 200px;
+    text-align: left;
+}

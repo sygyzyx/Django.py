@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{%load static%}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    <link rel="stylesheet" href="{%static 'books.css'%}">
+</head>
+<body>
+ <div class="row">      
+        <div class="col">
+            {%for i in bookList%}
+            {% csrf_token %}
+            <form action={% url 'delete' i.BookId %} method="POST">
+                {% csrf_token %}
+                <div class="listOfBooks">
+                    <div class="bookName">
+                        {{i.BookName}}
+                    </div>
+                    {% if request.user == i.User %}
+                    <button action='Submit'> Delete </button>
+                    {% else %}
+                    {% endif %}
+            </form>
+            
+            <form action={% url 'detail' i.BookId %} method="POST">
+                {% csrf_token %}
+                <button>Details</button>
+            </form>
+            
+           
+            <br>
+            </div>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
+{% endblock body %}

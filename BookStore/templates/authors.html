@@ -1,0 +1,35 @@
+{% extends 'base.html' %} {%load static%} {% block body %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authors</title>
+    <link rel="stylesheet" href="{%static 'books.css' %}" />
+  </head>
+
+  <body>
+    <div class="Field">
+      <div class="AddAuthor">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="Author">
+            Author : {{author.Author}}
+            <button>Add Authors</button>
+          </div>
+        </form>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <div class="Authors">
+          {%for i in authorList%}
+          <li>{{i.Author}}</li>
+          <br />
+          {% endfor %}
+        </div>
+      </form>
+    </div>
+  </body>
+</html>
+{% endblock body %}
