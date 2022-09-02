@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from app.models import Room as Rooms
+from app.models import Room 
 from app.forms import RoomForm
+from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 
@@ -62,20 +63,34 @@ def status(request):
     if request.method == 'POST':
         room_id = request.POST.get('room_Name')
         date = request.POST.get('datePicker')
-        start_time = datetime.strptime(request.POST.get('startTime'),"%H:%M")
-        end_time = datetime.strptime(request.POST.get('endTime'), "%H:%M")
-        #since from the input field in index.html we only take HOUR and MINUTES so "%H:%M"
-        if Rooms.objects.filter(room_Name_id = room_id):
-            if Rooms.objects.filter(room_book_date = date):
-                if Rooms.objects.filter(meeting_start_time__range=(start_time, end_time)): #USE Q Method
-                    if Rooms.objects.filter(meeting_end_time__range=(start_time,end_time)):
-                        # if Rooms.objects.filter(start_time = range(meeting_start_time, meeting_end_time)):   (1-6)  2-3
-                        messages.error(request, 'Room Booked')
+        session_start_time = datetime.strptime(request.POST.get('startTime'),"%H:%M").time()
+        #strptime returns a datetime oject but adding .time() returns only the time object.
+        session_end_time = datetime.strptime(request.POST.get('endTime'), "%H:%M").time()
+        #from the input field in index.html we only take HOUR and MINUTES so "%H:%M"
+        # import ipdb
+        # ipdb.set_trace()
+        if Room.objects.filter(room_Name_id = room_id):
+            if Room.objects.filter(room_book_date = date):    
+                timeValue = Room.objects.values_list('meeting_start_time')
+                for i in timeValue:
+                    meetingTime = (i[0])
+                    if session_start_time < meetingTime:
+                        messages.success(request, 'Room Available')
+                        return redirect('/')
+                    if session_start_time == meetingTime:
+                        messages.success(request, 'Room Available')
                         return redirect('/')
                     else:
-                        messages.success(request,'Not Booked')
-                        print('Not Booked')
+                        messages.error(request, 'Room Unavailable')
                         return redirect('/')
+                if Room.objects.filter(Q(meeting_start_time__range=(session_start_time, session_end_time))|Q(meeting_end_time__range=(session_start_time,session_end_time))):
+                        # if Rooms.objects.filter(session_start_time = range(meeting_start_time, meeting_end_time)):   (1-6)  2-3
+                        messages.error(request, 'Room Booked')
+                        return redirect('/')
+        else:
+            messages.success(request,'Not Booked')
+            print('Not Booked')
+            return redirect('/')
     else:
         messages.error('Error')
         return redirect('/')
