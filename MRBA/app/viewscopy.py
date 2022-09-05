@@ -1,4 +1,3 @@
-from ast import And
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
@@ -26,9 +25,11 @@ def dashboard(request):
         print(username,password)
         user = authenticate(username = username, password = password)
         if user is not None:
+            room = RoomForm()
+            context = {'room':room}
             login(request, user)
             messages.success(request, 'You are logged in')
-            return render(request, 'room.html')
+            return render(request, 'room.html', context)
         else:
             messages.error(request, 'Please enter a valid Username and Password')
             return redirect('/')
@@ -68,32 +69,28 @@ def status(request):
         #strptime returns a datetime oject but adding .time() returns only the time object.
         session_end_time = datetime.strptime(request.POST.get('endTime'), "%H:%M").time()
         #from the input field in index.html we only take HOUR and MINUTES so "%H:%M"
-        import ipdb
-        ipdb.set_trace()
+        # import ipdb
+        # ipdb.set_trace()
         if Room.objects.filter(room_Name_id = room_id):
             if Room.objects.filter(room_book_date = date):    
                 meetingStartTimes = Room.objects.values_list('meeting_start_time')
                 meetingEndTimes = Room.objects.values_list('meeting_end_time')
                 for i in meetingStartTimes:
-                    for j in meetingEndTimes:
-                        meetingStartTime = (i[0])
-                        meetingEndTime = (j[0])
-                    if session_start_time > meetingStartTime and session_start_time < meetingEndTime:
-                        messages.success(request, 'Room Unavailable')
+                    meetingTime = (i[0])
+                    if session_start_time < meetingTime:
+                        messages.success(request, 'Room Available')
                         return redirect('/')
-                    elif session_start_time > meetingEndTime:
-                        messages.error(request, 'Room Available')
-                        return redirect('/')
-                    elif session_end_time < meetingEndTime:
-                        messages.error(request, 'Room Unavailable') 
-                        return redirect('/') 
-                    elif session_start_time == meetingStartTime:
+                    elif session_start_time == meetingTime:
                         messages.error(request, 'Room Unavailable')
                         return redirect('/')
                     else:
-                        messages.error(request, 'Room Available')
+                        messages.error(request, 'Room Unavailable')
                         return redirect('/')
-                    
+                for i in meetingEndTimes:
+                    meetingTime = (i[0])
+                    if session_end_time < meetingTime:
+                        messages.error(request, 'Room Unavailable')
+                        return redirect('/')
                 if Room.objects.filter(Q(meeting_start_time__range=(session_start_time, session_end_time))|Q(meeting_end_time__range=(session_start_time,session_end_time))):
                         # if Rooms.objects.filter(session_start_time = range(meeting_start_time, meeting_end_time)):   (1-6)  2-3
                         messages.error(request, 'Room Booked')

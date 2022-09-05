@@ -11,9 +11,9 @@ class Room(models.Model):
     room_Name = models.ForeignKey(Room_Name, on_delete=models.CASCADE)
     room_book_date = models.DateField()
     meeting_start_time = models.TimeField()
-    room_leave_date = models.DateField()
     meeting_end_time = models.TimeField()
     room_booked_by_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_available = models.BooleanField( default=True )
+    
+    
 
 

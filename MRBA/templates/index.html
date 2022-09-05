@@ -15,6 +15,9 @@
           <option value="saab">Tomorrow</option>
         </select>
         Or. {% endcomment %}
+        {% if availability %}
+        <h2>{{ roomName }} is Available<h2>
+        {% else %}
         Pick a room:
         <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
         <label for="datePicker">Pick a date:</label>
@@ -24,10 +27,17 @@
         <label for="appt">To:</label>
         <input type="time" id="endTime" name="endTime" >
         <button type='Submit'>Search</button>
-    </form>
+        {% endif %}
   </div>
   <div class="roomDisplay">
-    aaaa
+    {% if availability %}
+    {{roomName}} on 
+    {{Date}} at 
+    {{bookStartTime}} to {{bookEndTime}} is Available
+    <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button>
+    {% else %}
+    {% endif %}
+  </form>
   </div>
   </div>
   <div class="loginArea">
@@ -61,50 +71,74 @@
 <!--Login Area-->
 
 
+
+
 <!-- Sign Up Modal -->
-<form action='signup' method='POST'>
-{% csrf_token %}
-<div class="modal fade" id="SignUpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Create an account</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label for="Username" class="form-label">Enter a Username:</label>
-          <input type="text" class="form-control" id="Username" name="Username" placeholder="Create a Username">
+  <form action='signup' method='POST'>
+  {% csrf_token %}
+  <div class="modal fade" id="SignUpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Create an account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="mb-3">
-          <label for="first_Name" class="form-label">First Name:</label>
-          <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="Username" class="form-label">Enter a Username:</label>
+            <input type="text" class="form-control" id="Username" name="Username" placeholder="Create a Username">
+          </div>
+          <div class="mb-3">
+            <label for="first_Name" class="form-label">First Name:</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
+          </div>
+          <div class="mb-3">
+            <label for="last_Name" class="form-label">Last Name:</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Your Last Name">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address:</label>
+            <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email">
+          </div>
+          <div class="mb-3">
+            <label for="pass1" class="form-label">Create a Password:</label>
+            <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Create a Password">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Re-Enter your created Password">
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="last_Name" class="form-label">Last Name:</label>
-          <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Your Last Name">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
+          <button type='Submit' class="btn btn-primary">Submit</button>
         </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">Email address:</label>
-          <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email">
-        </div>
-        <div class="mb-3">
-          <label for="pass1" class="form-label">Create a Password:</label>
-          <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Create a Password">
-        </div>
-        <div class="mb-3">
-          <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Re-Enter your created Password">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
-        <button type='Submit' class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>
-</div>
-</form>
+  </form>
 <!-- Sign Up Modal -->
 
+<!--Room Book Modal-->
+  <form action='roombook' method='POST'>
+  {% csrf_token %}
+  <div class="modal fade" id="RoomBookModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h5 class="modal-title w-100" id="exampleModalLabel">Please Log In To Continue</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">         
+          <div class="mb-3">
+            
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+<!--Room Book Modal-->
 
 {% endblock body %}

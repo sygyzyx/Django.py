@@ -1,4 +1,3 @@
-from dataclasses import fields
 from django.forms import ModelForm
 from .models import Room, Room_Name
 
@@ -8,7 +7,7 @@ class RoomForm(ModelForm):
         model = Room
         exclude = ['user',]
 
-class Room(ModelForm):
+class Room_NameForm(ModelForm):
     class Meta:
         model = Room_Name
         fields = '__all__'
