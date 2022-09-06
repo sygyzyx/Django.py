@@ -4,74 +4,65 @@
 {% block body %}
 
 <!--Login Area-->
-<div class="subContainer">
-  <div class="viewArea">
-    <form action="/status" method="POST">
-      {% csrf_token %}
-      <div class="d-inline">
-        {% comment %} Showing Available Rooms For
-         <select name="dayPicker" id="dayPicker">
-          <option value="volvo">Today</option>
-          <option value="saab">Tomorrow</option>
-        </select>
-        Or. {% endcomment %}
-        {% if availability %}
-        <h2>{{ roomName }} is Available<h2>
-        {% else %}
-        Pick a room:
-        <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
-        <label for="datePicker">Pick a date:</label>
-        <input type="date" id="datePicker" name="datePicker" required>
-        <label for="appt">Select a time:</label>
-        <input type="time" id="startTime" name="startTime" >
-        <label for="appt">To:</label>
-        <input type="time" id="endTime" name="endTime" >
-        <button type='Submit'>Search</button>
-        {% endif %}
-  </div>
-  <div class="roomDisplay">
-    {% if availability %}
-    {{roomName}} on 
-    {{Date}} at 
-    {{bookStartTime}} to {{bookEndTime}} is Available
-    <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button>
-    {% else %}
-    {% endif %}
-  </form>
-  </div>
-  </div>
-  <div class="loginArea">
-  <form action="dashboard" method="POST">
-      {% csrf_token %}
-      <div class="loginHeader">
-        <h4>Login</h4>
+  <div class="subContainer">
+    <div class="viewArea">
+      <form action="/status" method="POST">
+        {% csrf_token %}
+        <div class="d-inline">
+          {% if availability %}
+          <h2>{{ roomName }} is Available<h2>
+          {% else %}
+          Pick a room:
+          <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
+          <label for="datePicker">Pick a date:</label>
+          <input type="date" id="datePicker" name="datePicker" required>
+          <label for="appt">Select a time:</label>
+          <input type="time" id="startTime" name="startTime" required>
+          <label for="appt">To:</label>
+          <input type="time" id="endTime" name="endTime" required>
+          <button type='Submit'>Search</button>
+          {% endif %}
+    </div>
+    <div class="roomDisplay">
+      {% if availability %}
+      {{roomName}} on 
+      {{Date}} at 
+      {{bookStartTime}} to {{bookEndTime}} is Available
+      <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button>
+      {% else %}
+      {% endif %}
+    </form>
+    </div>
+    </div>
+    <div class="loginArea">
+    <form action="dashboard" method="POST">
+        {% csrf_token %}
+        <div class="loginHeader">
+          <h4>Login</h4>
+        </div>
+        <div class="inputField">
+          <div class="userNameInput">
+            <input type="text" id="username" placeholder="Enter Username" style="text-align: center" name="username"
+              />
+          </div>
+          <div class="userPasswordInput">
+            <input type="password" id="password" style="text-align: center" placeholder="Password" name="password"
+              />
+          </div>
+          <div class="LoginButton">
+            <button type='Submit' id="Loginbtn">Log In</button>
+          </div>
+    </form>
+      <div class="line"></div>
+      <div style="position: relative; top: 40px; color: white;">Or</div>
+      <div class="newAccount">
+        <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create a new
+          account
+        </button>
       </div>
-      <div class="inputField">
-        <div class="userNameInput">
-          <input type="text" id="username" placeholder="Enter Username" style="text-align: center" name="username"
-            />
-        </div>
-        <div class="userPasswordInput">
-          <input type="password" id="password" style="text-align: center" placeholder="Password" name="password"
-            />
-        </div>
-        <div class="LoginButton">
-          <button type='Submit' id="Loginbtn">Log In</button>
-        </div>
-  </form>
-    <div class="line"></div>
-    <div style="position: relative; top: 40px; color: white;">Or</div>
-    <div class="newAccount">
-      <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create a new
-        account
-      </button>
     </div>
   </div>
-</div>
 <!--Login Area-->
-
-
-
 
 <!-- Sign Up Modal -->
   <form action='signup' method='POST'>
@@ -118,8 +109,7 @@
   </form>
 <!-- Sign Up Modal -->
 
-<!--Room Book Modal-->
-  <form action='roombook' method='POST'>
+<!--Please Login Modal-->
   {% csrf_token %}
   <div class="modal fade" id="RoomBookModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -138,7 +128,6 @@
       </div>
     </div>
   </div>
-  </form>
-<!--Room Book Modal-->
+  <!--Please Login Modal-->
 
 {% endblock body %}

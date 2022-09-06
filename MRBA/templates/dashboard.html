@@ -2,18 +2,13 @@
 
 
 {% block body %}
+
 <!--Login Area-->
-<div class="Container m-2">
+  <div class="Container m-2"> 
     <div class="viewArea">
       <form action="/status" method="POST">
         {% csrf_token %}
         <div class="d-inline">
-          {% comment %} Showing Available Rooms For
-           <select name="dayPicker" id="dayPicker">
-            <option value="volvo">Today</option>
-            <option value="saab">Tomorrow</option>
-          </select>
-          Or. {% endcomment %}
           Pick a room:
           <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
           <label for="datePicker">Pick a date:</label>
@@ -29,17 +24,26 @@
       {% if availability %}
       <form action="bookroom" method="POST">
         {% csrf_token %}
-        <input type="hidden" name="roomName" value="{{roomName}}">
-        <input type="hidden" name="Date" value="{{Date}}">
-        <input type="hidden" name="bookStartTime" value="{{bookStartTime}}">
-        <input type="hidden" name="bookEndTime" value="{{bookEndTime}}">
-        <input type="hidden" name="user" value="{{user}}">
-      <button type="Submit"> Book Now </button>
-      </form>
-      {% else %}
-      {% endif %}
+        <div class="row">
+          <div class="col"><h2>{{ roomName }} is Available<h2></div>
+        </div>
+        <div class="row">
+          <div class="col">{{roomName}} on 
+            {{Date}} at 
+            {{bookStartTime}} to {{bookEndTime}} is Available
+            <input type="hidden" name="roomName" value="{{roomName}}">
+            <input type="hidden" name="Date" value="{{Date}}">
+            <input type="hidden" name="bookStartTime" value="{{bookStartTime}}">
+            <input type="hidden" name="bookEndTime" value="{{bookEndTime}}">
+            <input type="hidden" name="user" value="{{user}}">
+          <button type="Submit"> Book Now </button>
+          </form>
+          {% else %}
+          {% endif %}</div>
+        </div>
+        
     </div>
-    </div>
-  <!--Login Area-->
+  </div>
+<!--Login Area-->
   
 {% endblock body %}

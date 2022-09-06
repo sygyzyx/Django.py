@@ -13,7 +13,9 @@ class Room(models.Model):
     meeting_start_time = models.TimeField()
     meeting_end_time = models.TimeField()
     room_booked_by_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    
+    grant_meeting = models.BooleanField(default = False)
+    def __str__(self):
+        return self.room_Name.room_Name
     
 
 
