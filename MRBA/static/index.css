@@ -87,8 +87,11 @@ input{
     text-align:center;
 }
 #datePicker{
-    width:22px; height:22px; 
+    width:120px; height:22px; 
 }
 #endTime, #startTime{
     width:120px; height:22px;
+}
+.roomDisplay{
+    background-color: rgb(157, 255, 0);
 }

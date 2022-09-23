@@ -3,108 +3,135 @@
 
 {% block body %}
 
-<!--Login Area-->
-<div class="subContainer">
-  <div class="viewArea">
-    <form action="/status" method="POST">
-      {% csrf_token %}
-      <div class="d-inline">
-        {% comment %} Showing Available Rooms For
-         <select name="dayPicker" id="dayPicker">
-          <option value="volvo">Today</option>
-          <option value="saab">Tomorrow</option>
-        </select>
-        Or. {% endcomment %}
-        Pick a room:
-        <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
-        <label for="datePicker">Pick a date:</label>
-        <input type="date" id="datePicker" name="datePicker" required>
-        <label for="appt">Select a time:</label>
-        <input type="time" id="startTime" name="startTime" >
-        <label for="appt">To:</label>
-        <input type="time" id="endTime" name="endTime" >
-        <button type='Submit'>Search</button>
+<!--Room Display Area-->
+  <div class="subContainer">
+    <div class="viewArea">
+      <form action="status" method="POST">
+        {% csrf_token %}
+        <div class="d-inline">
+          {% if availability %}
+          <h2>{{ roomName }} is Available<h2>
+          {% else %}
+          Pick a room:
+          <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
+          <label for="datePicker">Pick a date:</label>
+          <input type="date" id="datePicker" name="datePicker" required>
+          <label for="appt">Select a time:</label>
+          <input type="time" id="startTime" name="startTime" required>
+          <label for="appt">To:</label>
+          <input type="time" id="endTime" name="endTime" required>
+          <button type='Submit'>Search</button>
+          {% endif %}
+    </div>
+    <div class="roomDisplay">
+      {% if availability %}
+      {{roomName}} on 
+      {{Date}} at 
+      {{bookStartTime}} to {{bookEndTime}} is Available
+      <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button>
+      {% else %}
+      {% endif %}
     </form>
-  </div>
-  <div class="roomDisplay">
-    aaaa
-  </div>
-  </div>
-  <div class="loginArea">
-  <form action="dashboard" method="POST">
-      {% csrf_token %}
-      <div class="loginHeader">
-        <h4>Login</h4>
+    </div>
+    </div>
+<!--Room Display Area-->
+
+
+<!--Login Area-->
+    <div class="loginArea">
+    <form action="/dashboard" method="POST">
+        {% csrf_token %}
+        <div class="loginHeader">
+          <h4>Login</h4>
+        </div>
+        <div class="inputField">
+          <div class="userNameInput">
+            <input type="text" id="username" placeholder="Enter Username" style="text-align: center" name="username"
+              />
+          </div>
+          <div class="userPasswordInput">
+            <input type="password" id="password" style="text-align: center" placeholder="Password" name="password"
+              />
+          </div>
+          <div class="LoginButton">
+            <button type='Submit' id="Loginbtn">Log In</button>
+          </div>
+    </form>
+      <div class="line"></div>
+      <div style="position: relative; top: 40px; color: white;">Or</div>
+      <div class="newAccount">
+        <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create a new
+          account
+        </button>
       </div>
-      <div class="inputField">
-        <div class="userNameInput">
-          <input type="text" id="username" placeholder="Enter Username" style="text-align: center" name="username"
-            />
-        </div>
-        <div class="userPasswordInput">
-          <input type="password" id="password" style="text-align: center" placeholder="Password" name="password"
-            />
-        </div>
-        <div class="LoginButton">
-          <button type='Submit' id="Loginbtn">Log In</button>
-        </div>
-  </form>
-    <div class="line"></div>
-    <div style="position: relative; top: 40px; color: white;">Or</div>
-    <div class="newAccount">
-      <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create a new
-        account
-      </button>
     </div>
   </div>
-</div>
 <!--Login Area-->
 
-
 <!-- Sign Up Modal -->
-<form action='signup' method='POST'>
-{% csrf_token %}
-<div class="modal fade" id="SignUpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Create an account</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3">
-          <label for="Username" class="form-label">Enter a Username:</label>
-          <input type="text" class="form-control" id="Username" name="Username" placeholder="Create a Username">
+  <form action='signup/' method='POST'>
+  {% csrf_token %}
+  <div class="modal fade" id="SignUpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Create an account</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="mb-3">
-          <label for="first_Name" class="form-label">First Name:</label>
-          <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="Username" class="form-label">Enter a Username:</label>
+            <input type="text" class="form-control" id="Username" name="Username" placeholder="Create a Username">
+          </div>
+          <div class="mb-3">
+            <label for="first_Name" class="form-label">First Name:</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter First Name">
+          </div>
+          <div class="mb-3">
+            <label for="last_Name" class="form-label">Last Name:</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Your Last Name">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address:</label>
+            <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email">
+          </div>
+          <div class="mb-3">
+            <label for="pass1" class="form-label">Create a Password:</label>
+            <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Create a Password">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Re-Enter your created Password">
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="last_Name" class="form-label">Last Name:</label>
-          <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter Your Last Name">
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
+          <button type='Submit' class="btn btn-primary">Submit</button>
         </div>
-        <div class="mb-3">
-          <label for="email" class="form-label">Email address:</label>
-          <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email">
-        </div>
-        <div class="mb-3">
-          <label for="pass1" class="form-label">Create a Password:</label>
-          <input type="password" class="form-control" id="pass1" name="pass1" placeholder="Create a Password">
-        </div>
-        <div class="mb-3">
-          <input type="password" class="form-control" id="pass2" name="pass2" placeholder="Re-Enter your created Password">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
-        <button type='Submit' class="btn btn-primary">Submit</button>
       </div>
     </div>
   </div>
-</div>
-</form>
+  </form>
 <!-- Sign Up Modal -->
 
+<!--Please Login Modal-->
+  {% csrf_token %}
+  <div class="modal fade" id="RoomBookModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h5 class="modal-title w-100" id="exampleModalLabel">Please Log In To Continue</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">         
+          <div class="mb-3">
+            
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Please Login Modal-->
 
 {% endblock body %}
