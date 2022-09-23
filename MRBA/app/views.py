@@ -1,5 +1,6 @@
-from email import message_from_binary_file
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from app.models import Room, Room_Name 
@@ -11,23 +12,21 @@ from datetime import datetime
 
 def index(request):
     room = RoomForm()
-    bookedrooms = Room.objects.all()
-    context = {'room':room, 'booked':bookedrooms}
-    user = request.user
-    if user.groups.filter(name='manager'):
-                #Displays Manager.html only to users assigned the GROUP as manager in admin site
-                return render(request, 'meetOnManager.html', context)
-    elif user.groups.filter(name='user'):
-        return render(request, 'dashboard.html', context)
-    room = RoomForm()
-    context = {'room': room}
-    return render(request, 'index.html', context)
+    bookedrooms = Room.objects.all().values()
+    context = {'room':room, 'bookedrooms':bookedrooms}
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        return render(request, 'index.html', context)
    
-
-def userLogin(request):
+def dashboard(request):
+    # import ipdb
+    # ipdb.set_trace()
     room = RoomForm()
-    bookedrooms = Room.objects.all()
-    context = {'room':room, 'booked':bookedrooms}
+    today = datetime.today()
+    bookedrooms = Room.objects.all().filter(room_book_date = today)
+    context = {'room':room, 'bookedrooms':bookedrooms}
+    print(bookedrooms)
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -35,16 +34,15 @@ def userLogin(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'You are logged in')
-            if user.groups.filter(name='manager'):
-                #Displays Manager.html only to users assigned the GROUP as manager in admin site
-                return render(request, 'meetOnManager.html', context)
-            if user.groups.filter(name='user'):
+            if user.groups.filter(Q(name='manager')|Q(name='user')):
+                #Displays dashboard.html to 'user' and 'manager' assigned to the GROUP as 'user' and 'manager' in admin site
                 return render(request, 'dashboard.html', context)
         else:
             messages.error(request, 'Please enter a valid Username and Password')
             return redirect('/')
-    messages.error(request,'You cannot access this page')
-    return redirect('/')
+    if request.user.is_anonymous:
+        return redirect('/')
+    return render(request, 'dashboard.html',context)
 
 def signup(request):
     if request.method == 'POST':
@@ -71,6 +69,8 @@ def signup(request):
 
 def status(request):
     if request.method == 'POST':
+        # import ipdb
+        # ipdb.set_trace()
         room_id = request.POST.get('room_Name')
         date = request.POST.get('datePicker')
         room = RoomForm()
@@ -83,21 +83,12 @@ def status(request):
         if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):    
             meetingTimeRange = Room.objects.values_list('meeting_start_time','meeting_end_time')
             for i in meetingTimeRange:
-                start_time = int(i[0].strftime("%H%M"))
-                end_time = int(i[1].strftime("%H%M"))
-                if session_startStrf_time in range(start_time,end_time) or session_endStrf_time in range(start_time,end_time):
+                meeting_start_time = int(i[0].strftime("%H%M"))
+                meeting_end_time = int(i[1].strftime("%H%M"))
+                if session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time):         
+                    #or condition for 'meeting_end_time' not so necessary
                     messages.error(request, 'Sorry This room is Booked')
                     return redirect('dashboard')
-                else:
-                    availability = True
-                    messages.success(request, 'Room available')
-                    roomName = Room_Name.objects.get(id = room_id)
-                    user = request.user
-                    context = {'availability' : availability, 'roomName':roomName, 'Date': date, 'bookStartTime':session_start_time, 'bookEndTime': session_end_time,'User': user , 'room': room }
-                    if request.user.is_anonymous:
-                        return render(request,'index.html', context)
-                    else:
-                        return render(request,'dashboard.html', context)
             else:
                 availability = True
                 messages.success(request, 'Room available')
@@ -119,8 +110,7 @@ def status(request):
             else:
                 return render(request,'dashboard.html', context)
     else:
-        messages.error(request, 'Error')
-        return redirect('status')    
+        return redirect('dashboard')    
 
 def bookroom(request):
     if request.method == "POST":
@@ -149,7 +139,7 @@ def bookroom(request):
         bookRoom.save()
         context = {'room':room}
         messages.success(request, 'You Have Booked a room')
-        return render(request, 'dashboard.html', context)
+        return redirect('dashboard')
 
 def signout(request):
     logout(request)

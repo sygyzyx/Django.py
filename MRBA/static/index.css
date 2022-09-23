@@ -92,3 +92,6 @@ input{
 #endTime, #startTime{
     width:120px; height:22px;
 }
+.roomDisplay{
+    background-color: rgb(157, 255, 0);
+}
