@@ -42,6 +42,7 @@
       </div>
     </form>
     {% else %}
+    
     {% endif %}
     <div class="row">
       <div class="col">
@@ -50,7 +51,16 @@
         {% for i in bookedrooms %}
         <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
-        
+      </div>
+      <div>
+        {% if user == "manager" %}
+        HELLO MANAGER
+        {% else %}
+        {% endif %}
+        {% if user == "user" %}
+        BELLO BANAGER
+        {% else %}
+        {% endif %}
       </div>
     </div>
   </div>

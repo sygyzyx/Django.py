@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
@@ -10,7 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 
 
-def index(request):
+def Index(request):
     room = RoomForm()
     bookedrooms = Room.objects.all().values()
     context = {'room':room, 'bookedrooms':bookedrooms}
@@ -18,15 +17,9 @@ def index(request):
         return redirect('dashboard')
     else:
         return render(request, 'index.html', context)
-   
-def dashboard(request):
-    # import ipdb
-    # ipdb.set_trace()
-    room = RoomForm()
-    today = datetime.today()
-    bookedrooms = Room.objects.all().filter(room_book_date = today)
-    context = {'room':room, 'bookedrooms':bookedrooms}
-    print(bookedrooms)
+
+
+def LoginView(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -34,17 +27,28 @@ def dashboard(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'You are logged in')
-            if user.groups.filter(Q(name='manager')|Q(name='user')):
+            # if user.groups.filter(Q(name='manager')|Q(name='user')):
                 #Displays dashboard.html to 'user' and 'manager' assigned to the GROUP as 'user' and 'manager' in admin site
-                return render(request, 'dashboard.html', context)
+            return redirect('dashboard')
         else:
             messages.error(request, 'Please enter a valid Username and Password')
             return redirect('/')
+    
+
+def Dashboard(request):
+    # import ipdb
+    # ipdb.set_trace()
+    room = RoomForm()
+    today = datetime.today()
+    bookedrooms = Room.objects.all().filter(room_book_date = today)
+    user = request.user
+    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user}
+    
     if request.user.is_anonymous:
         return redirect('/')
     return render(request, 'dashboard.html',context)
 
-def signup(request):
+def Signup(request):
     if request.method == 'POST':
         username = request.POST.get('Username')
         f_name = request.POST.get('first_name')
@@ -63,11 +67,11 @@ def signup(request):
             group = Group.objects.get(name='user') 
             group.user_set.add(user)
             user.save()
-            messages.success(request, 'You can now a registered User !! Please continue to Login')
+            messages.success(request, 'You are now a registered User !! Please continue to Login')
             return redirect('/')    
     return redirect('/')
 
-def status(request):
+def Status(request):
     if request.method == 'POST':
         # import ipdb
         # ipdb.set_trace()
@@ -112,7 +116,7 @@ def status(request):
     else:
         return redirect('dashboard')    
 
-def bookroom(request):
+def BookRoom(request):
     if request.method == "POST":
         # import ipdb
         # ipdb.set_trace()
@@ -141,7 +145,7 @@ def bookroom(request):
         messages.success(request, 'You Have Booked a room')
         return redirect('dashboard')
 
-def signout(request):
+def Signout(request):
     logout(request)
     messages.warning(request, 'You are logged out')
     return redirect('/')
