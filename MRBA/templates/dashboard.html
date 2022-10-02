@@ -1,10 +1,19 @@
 {% extends 'navbar.html' %}
 
+{% block yourRoomButton %}Your Room{% endblock yourRoomButton %}
 
 {% block body %}
 <!--Room Search Area-->
-<div class="Container m-2">
-  <div class="viewArea">
+<div class="dashContainer">
+<div class="dashMenu">
+  <h5>Menu</h5>
+  <div class="menuList">
+    <a class="nav-link active" aria-current="page" href="room" style='color:white;'>
+      Your Rooms
+    </a>
+  </div>
+</div>
+<div class="dashBody">
     <form action="/status" method="POST">
       {% csrf_token %}
       <div class="d-inline">
@@ -19,7 +28,7 @@
         <button type='Submit'>Search</button>
     </form>
   </div>
-  <div class="roomDisplay">
+  <div class="dashRoomDisp">
     {% if availability %}
     <form action="bookroom" method="POST">
       {% csrf_token %}
@@ -42,29 +51,17 @@
       </div>
     </form>
     {% else %}
-    
     {% endif %}
-    <div class="row">
-      <div class="col">
-        <div class="roomDisplay">
-          <h3>Displaying Booked Rooms for Today</h3>
+    <h3>Displaying Booked Rooms for Today</h3>
         {% for i in bookedrooms %}
         <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
-      </div>
-      <div>
-        {% if user == "manager" %}
-        HELLO MANAGER
-        {% else %}
-        {% endif %}
-        {% if user == "user" %}
-        BELLO BANAGER
-        {% else %}
-        {% endif %}
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 <!--Room Search Area-->
 
 
