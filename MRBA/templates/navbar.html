@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="{% static 'bootstrap.css' %}" /> 
   <!--Call bootstrap first so that it doesnot conflict with toastr-->
   <link rel="stylesheet" href="{% static 'toastr.css' %}" />
-  <link rel="stylesheet" href="{% static 'index.css' %}" />
+  <link rel="stylesheet" href="{% static 'css.css' %}" />
   <title>MRBA</title>
 </head>
 <body>
@@ -21,7 +21,7 @@
         <a class="navbar-brand" href="/" style="pointer-events: none; cursor: default;">
           <img src="{% static 'logo.gif' %}" alt="" width="40" height="40"/>
         </a>
-        <a class="navbar-brand" href="/" style="pointer-events: none; cursor: default;">Meet On</a>
+        <a class="navbar-brand" href="/">Meet On</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
           aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -54,6 +54,12 @@
             <a class="nav-link" href="/" style="pointer-events: none; cursor: default;">Unavailable</a>
           </div>
           {% endif %}
+            <ul class="navbar-nav">
+            <li class="nav-item">
+              {% comment %} <a class="nav-link active" aria-current="page" href="room">{% block yourRoomButton %}{% endblock yourRoomButton %}</a> {% endcomment %}
+            </li>
+          </ul>
+          
         </div>
         {% if user.is_authenticated %}
         <span class="navbar-text">

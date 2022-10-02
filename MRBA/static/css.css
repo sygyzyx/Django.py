@@ -1,11 +1,19 @@
+/* GLOBAL */
 body{
     background-color: #B8D8D8 !important;
 }
-
+input{
+    border-radius: 5px;
+    width: 280px;
+    height: 40px;
+    border: 2px solid rgba(198, 113, 113, 0.525);
+}
 .navItem{
     padding: 10px;
 }
+/* GLOBAL */
 
+/* INDEX */
 .loginText{
     background-color: #7A9E9F;
     padding: 10px;
@@ -26,17 +34,12 @@ body{
     padding: 10px;
     background-color: #EEF5DB;
     height: 500px;
+    
 }
 .loginArea{
     text-align: center;
     background-color: #7A9E9F;
     padding: 10px;
-}
-input{
-    border-radius: 5px;
-    width: 280px;
-    height: 40px;
-    border: 2px solid rgba(198, 113, 113, 0.525);
 }
 .userNameInput{
     margin-top: 20px;
@@ -93,5 +96,29 @@ input{
     width:120px; height:22px;
 }
 .roomDisplay{
+    /* padding: 10px 30px;
+    margin-top: 20px; */
+    background-color: rgb(157, 255, 0);
+}
+.dashContainer{
+    display: grid;
+    grid-template-columns: 20% 80%;
+    background-color: #658384;
+    margin: 10px;
+    padding: 3px;
+    height: 100vh;
+} 
+.dashMenu{
+    text-align: center;
+}
+.dashBody{
+    text-align: left;
+    padding: 10px;
+    background-color: #EEF5DB;
+    
+}
+.dashRoomDisp{
+    padding: 10px 30px;
+    margin-top: 20px;
     background-color: rgb(157, 255, 0);
 }

@@ -22,6 +22,11 @@
           <input type="time" id="endTime" name="endTime" required>
           <button type='Submit'>Search</button>
           {% endif %}
+          <h3>Displaying Booked Rooms for Today</h3>
+          {% for i in bookedrooms %}
+          <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+          {% endfor %}
+        
     </div>
     <div class="roomDisplay">
       {% if availability %}
@@ -34,12 +39,13 @@
     </form>
     </div>
     </div>
+    
 <!--Room Display Area-->
 
 
 <!--Login Area-->
-    <div class="loginArea">
-    <form action="/dashboard" method="POST">
+  <div class="loginArea">
+    <form action="/login" method="POST">
         {% csrf_token %}
         <div class="loginHeader">
           <h4>Login</h4>
