@@ -83,7 +83,10 @@ def Status(request):
         #from the input field in index.html we only take HOUR and MINUTES so "%H:%M"yyyyyyy
         if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):    
             meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
+<<<<<<< HEAD
+=======
             print(meetingTimeRange)
+>>>>>>> main
             for i in meetingTimeRange:
                 meeting_start_time = int(i[0].strftime("%H%M"))
                 meeting_end_time = int(i[1].strftime("%H%M"))
