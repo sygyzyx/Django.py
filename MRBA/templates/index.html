@@ -22,13 +22,13 @@
           <input type="time" id="endTime" name="endTime" required>
           <button type='Submit'>Search</button>
           {% endif %}
-          <h3>Displaying Booked Rooms for Today</h3>
-          {% for i in bookedrooms %}
-          <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
-          {% endfor %}
-        
+      </form>
     </div>
     <div class="roomDisplay">
+      <h3>Displaying Booked Rooms for Today</h3>
+      {% for i in bookedrooms %}
+      <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+      {% endfor %}
       {% if availability %}
       {{roomName}} on 
       {{Date}} at 
@@ -36,7 +36,7 @@
       <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button>
       {% else %}
       {% endif %}
-    </form>
+    
     </div>
     </div>
     

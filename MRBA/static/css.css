@@ -96,9 +96,11 @@ input{
     width:120px; height:22px;
 }
 .roomDisplay{
-    /* padding: 10px 30px;
-    margin-top: 20px; */
-    background-color: rgb(157, 255, 0);
+    border-radius: 10px;
+    text-align: left;
+    padding: 10px 30px;
+    margin-top: 20px;
+    background-color: #58d778;
 }
 .dashContainer{
     display: grid;
