@@ -1,0 +1,10 @@
+function addOctDate() {
+        var cls = document.getElementsByClassName("oct_days"); 
+        for (n=0, length = cls.length; n < length; n++) {
+            cls[n].id= "oct_" + (n + 1); 
+        }
+    }; 
+
+addOctDate()
+
+// https://stackoverflow.com/questions/19261518/javascript-add-element-id-using-for-loop

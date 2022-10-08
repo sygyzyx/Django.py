@@ -8,13 +8,16 @@
 <div class="dashMenu">
   <h5>Menu</h5>
   <div class="menuList">
-    <a class="nav-link active" aria-current="page" href="room" style='color:white;'>
+    <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
       Your Rooms
+    </a>
+    <a class="nav-link active" aria-current="page" href="Account" style='color:white;'>
+      Account
     </a>
   </div>
 </div>
 <div class="dashBody">
-    <form action="/status" method="POST">
+    <form action="Status" method="POST">
       {% csrf_token %}
       <div class="d-inline">
         Pick a room:
@@ -30,7 +33,7 @@
   </div>
   <div class="dashRoomDisp">
     {% if availability %}
-    <form action="bookroom" method="POST">
+    <form action="Bookroom" method="POST">
       {% csrf_token %}
       <div class="row">
         <div class="col">
@@ -47,14 +50,14 @@
           <input type="hidden" name="bookEndTime" value="{{bookEndTime}}">
           <input type="hidden" name="user" value="{{user}}">
           <button type="Submit"> Book Now </button>
-          <a href="/"><button>Cancel
+        </form>
+          <a href="/"><button type="button">Cancel
           </button></a>
         </div>
       </div>
-    </form>
     {% else %}
-    {% endif %}
     <h3>Displaying Booked Rooms for Today</h3>
+    {% endif %}
         {% for i in bookedrooms %}
         <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
         {% endfor %}

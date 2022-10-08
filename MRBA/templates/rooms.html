@@ -1,1 +1,18 @@
-NORMAL ROOM
+{% extends 'navbar.html' %}
+
+{% block body %}
+<div class="adminRoomView">
+{% for i in userRoom  %}
+<form id='adminform' action={% url 'editRoom' i.id %} method = "POST">
+{% csrf_token %}
+<li>{{i.room_Name}} at
+{{i.meeting_start_time}} to {{i.meeting_end_time}} on {{i.room_book_date}}
+<button>Edit</button>
+<br>
+</li>
+</form>
+{% endfor %}
+</div>
+
+{% endblock body %}
+

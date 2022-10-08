@@ -40,6 +40,7 @@
           <div class="navbar-nav">
             <a class="nav-link" href="/" style="pointer-events: none; cursor: default;">Available</a>
           </div>
+          <div class="navbar-nav" id="meetingTimeDisplay"></div>
           {% else %}
           <div class="activity_light" style="border-radius: 100px;
           height: 10px;
@@ -52,6 +53,7 @@
           filter: blur(1px);"></div>
           <div class="navbar-nav">
             <a class="nav-link" href="/" style="pointer-events: none; cursor: default;">Unavailable</a>
+            
           </div>
           {% endif %}
             <ul class="navbar-nav">
@@ -60,12 +62,13 @@
             </li>
           </ul>
           
+          
         </div>
         {% if user.is_authenticated %}
         <span class="navbar-text">
           Welcome, Mr. {{request.user.username}}
         </span>
-        <a href="signout">
+        <a href="Signout">
         <button class="btn btn-danger m-2">Log Out</button></a>  
         {% else %}
         {% endif %}
@@ -108,7 +111,7 @@
 
 {% endblock body %}
 
-<script src="{% static 'index.js' %}"></script>
+<script src="{% static 'js.js' %}"></script>
 <script src="{% static 'bootstrap.js' %}"></script>
 </body>
 
