@@ -64,22 +64,16 @@ def details(request, id):
 
 
 def edit(request, id):
-    if request.user == Books.User:
-        # Book = Books.objects.get(BookId = id)
-        # or 
-        Book = get_object_or_404(Books, BookId = id)
-        #returns a 404 error if the BookId is not found
-        form = BookForm(request.POST or None,instance=Book)
-        if form.is_valid():
-            form.save()
-            messages.info(request, 'Book Updated Successfully')
-            return redirect('book')
-        context = {'form':form}
-        return render(request, 'editBook.html', context)
-    else:
-        logout(request)
-        messages.error(request, 'You cannot access this page Please Login')
-        return redirect('/')
+    Book = get_object_or_404(Books, BookId = id)
+    #returns a 404 error if the BookId is not found
+    form = BookForm(request.POST or None,instance=Book)
+    if form.is_valid():
+        form.save()
+        messages.info(request, 'Book Updated Successfully')
+        return redirect('book')
+    context = {'form':form}
+    return render(request, 'editBook.html', context)
+  
     
     
 def signup(request):
