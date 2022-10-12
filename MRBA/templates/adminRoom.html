@@ -9,20 +9,27 @@
       <form action="Grantmeet" method="POST">
         {% csrf_token %}
         <input type="hidden" class="roomIdValue" id="value" name="value" value="{{i.id}}">
-        <input type="text" class="grantMeetingValue" id="boolValue" name="boolValue" value="{{i.grant_meeting}}">
+        <input type="hidden" class="grantMeetingValue" id="boolValue" name="boolValue" value="{{i.grant_meeting}}">
         {{i.room_Name}} at
         {{i.meeting_start_time}} to {{i.meeting_end_time}} on Date {{i.room_book_date}}
         by {{i.room_booked_by_user}}
         | Room Status |
         <label class="toggle">
           <input type="checkbox">
-          <span class="labels" onclick="spanClick(this.id)" data-on="Approved" data-off="Pending"></span>
+          <span class="labels" onclick="setTimeout(spanClick.bind(null,this.id),500);" data-on="Approved" data-off="Pending"></span>
         </label>
         <div id="" style="display:none;" class="btnSubmitId"><button>Submit</button></div>
       </form>
+      <form id='editForm' action={% url 'editRoom' i.id %}>
+        <button>Edit</button>
+        <br>
+        </li>
+        </form>
       <form action={% url 'cancelbook' i.id %} method = "POST">
         {% csrf_token %}
-        <div id="" style="display:none;" class="btnCancelId"><button type="Submit">Cancel</button></div>
+        <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)"><button>Cancel This Meeting</button></div>
+        
+        <div id="" style="display:none;" class="btnCancelIdConfirm"><button type="Submit" onclick="btnCancelClick()">Cancel</button></div>
       </form>
     </div>
     {% endfor %}

@@ -6,7 +6,7 @@
 <!--Room Display Area-->
   <div class="subContainer">
     <div class="viewArea">
-      <form action="Status" method="POST">
+      <form action="Status" method="POST" class='SearchForm'>
         {% csrf_token %}
         <div class="d-inline">
           {% if availability %}
@@ -25,7 +25,10 @@
       </form>
     </div>
     <div class="roomDisplay">
+      {% if availability %}
+      {% else %}
       <h3>Displaying Booked Rooms for Today</h3>
+      {% endif %}
       {% for i in bookedrooms %}
       <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
       {% endfor %}

@@ -9,6 +9,7 @@ var id = document.getElementsByClassName('labels');
 var toggleID = document.getElementsByClassName('toggle');
 btnSubmit = document.getElementsByClassName('btnSubmitId')
 btnCancel = document.getElementsByClassName('btnCancelId')
+btnCancelConfirm = document.getElementsByClassName('btnCancelIdConfirm')
 var grantMeetValue = document.getElementsByClassName('grantMeetingValue')
 for (n=0, length = value.length; n<length; n++){
   var Id = value[n].value
@@ -16,39 +17,43 @@ for (n=0, length = value.length; n<length; n++){
     toggleID[n].id = Id + 'tgl';
     btnSubmit[n].id = Id +'submitID';
     btnCancel[n].id = Id + 'CancelBtn';
+    btnCancelConfirm[n].id = Id + 'CancelBtnConfirm';
     if (grantMeetValue[n].value == 'True'){
       document.getElementById(Id).style.display = 'none';
       document.getElementById(Id+'tgl').style.display = 'none';
       document.getElementById(Id+'CancelBtn').style.display = "inline-block";
-    }
-    else{
-      console.log("NOTOK")
-    }
-    
-  
+    }  
   }
 }
-
 //#####
 
-
-
-
-
-
-
-
 //Function after Span Clicked
+var switchStatus = false;
 function spanClick(clicked_id)
 {
-var approve = window.confirm("Approve this Meeting ?");
-if (approve) {
+if (!switchStatus) {
+  var approve = window.confirm("Approve this Meeting ?");
+  if (approve){
   document.getElementById(clicked_id+'submitID').style.display = "inline-block";
   switchStatus = true;
-}
-else {
+  } 
+  else{
     location.reload()
-}}
+  }
+}
+else if (switchStatus) {
+  var approve = window.confirm("this Meeting ?");
+  if (approve){
+  location.reload()
+  }
+}
+}
+function btnCancelClick(clicked_id){
+  var approve = window.confirm(clicked_id);
+  if (approve){
+  alert(document.getElementById(clicked_id+'CancelBtn'))
+  }
+}
 //#####
 
 

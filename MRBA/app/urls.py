@@ -12,5 +12,6 @@ urlpatterns = [
     path('Room', views.roomView, name='room'),
     path('Account', views.accountView, name='account'),
     path('Grantmeet', views.grantMeetView, name='grantmeet'),
-    path('CancelBooking/<int:id>/', views.cancelBookingView, name='cancelbook')
+    path('CancelBooking/<int:id>', views.cancelBookingView, name='cancelbook'),
+    path('EditRoom/<int:id>', views.editRoomView, name='editRoom')
 ]

@@ -3,14 +3,25 @@ body{
     /* background-color: #261C15 !important; */
     background-color: white !important;
 }
+select{
+    border-radius: 7px;
+    text-align: center;
+    border: 2px solid #c6717186;
+}
+.SearchForm{
+    text-align: center;
+}
 input{
     border-radius: 5px;
     width: 280px;
     height: 40px;
-    border: 2px solid rgba(198, 113, 113, 0.525);
+    border: 2px solid #c6717186;
 }
 .navItem{
     padding: 10px;
+}
+form{
+    display: inline;
 }
 /* GLOBAL */
 
@@ -85,16 +96,18 @@ input{
     background-color: #ffffff;
 }
 .navBar{
-    border: 5px solid rgba(0, 0, 0, 0.194);
+    border: 5px solid #00000031;
 }
 #dayPicker{
     text-align:center;
 }
 #datePicker{
-    width:120px; height:22px; 
+    text-align: center;
+    width:25px; height:22px; 
 }
 #endTime, #startTime{
-    width:120px; height:22px;
+    text-align: center;
+    width:105px; height:22px;
 }
 .roomDisplay{
     border-radius: 5px;
