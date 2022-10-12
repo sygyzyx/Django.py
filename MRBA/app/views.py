@@ -1,10 +1,13 @@
+from email import message
 from tokenize import group
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from matplotlib.style import context
+from requests import delete
 from app.models import Room, Room_Name 
-from app.forms import RoomForm, RoomFormEdit
+from app.forms import RoomForm
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
@@ -162,38 +165,71 @@ def accountView(request):
 
 
 def editRoomView(request, id):
-    user = request.user
-    if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
-        room = get_object_or_404(Room, id = id)
-        form = RoomFormEdit(request.POST or None, instance=room)
-        room_id = request.POST.get('room_Name')
-        if form.is_valid():
-            date = request.POST.get('datePicker')
-            session_start_time = datetime.strptime(request.POST.get('startTime'),"%H:%M").time()
-            session_startStrf_time = int(session_start_time.strftime("%H%M"))
-            #strptime returns a datetime oject but adding .time() returns only the time object.
-            session_end_time = datetime.strptime(request.POST.get('endTime'), "%H:%M").time()
-            session_endStrf_time = int(session_end_time.strftime("%H%M"))
-            if Room.objects.filter(room_book_date = date):
-                meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
-                for i in meetingTimeRange:
-                    meeting_start_time = int(i[0].strftime("%H%M"))
-                    meeting_end_time = int(i[1].strftime("%H%M"))
-                    if session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time):         
-                        #or condition for 'meeting_end_time' not so necessary
-                        messages.error(request, 'Sorry This room is Booked')
-                        return redirect('room')
-                else:
-                    form.save()  
-                    messages.info(request, 'Room Updated Successfully')
-                    return redirect('room')
-        context = {
-            'room':room,
-            'form':form
+    room = get_object_or_404(Room, id = id)
+    form = RoomForm(request.POST or None, instance=room)
+    context = {
+            'form':form,
+            'room':room
         }
-        return render(request, 'editroom.html', context)
-    else:
-        return redirect('room')
+    if form.is_valid():
+        room_id = request.POST.get('room_Name')
+        date = request.POST.get('room_book_date')
+        #####
+        time_StartTime_inapt = request.POST.get('meeting_start_time')    
+        time_StartTime_processed = time_StartTime_inapt.replace('.','').upper()
+        time_StartTime_processed_2 = datetime.strptime(time_StartTime_processed, "%H:%M:%S")
+        StartTime = int(datetime.strftime(time_StartTime_processed_2, "%H:%M").replace(":",""))
+        #####
+        time_EndTime_inapt = request.POST.get('meeting_end_time')
+        time_EndTime_processed = time_EndTime_inapt.replace('.','').upper()
+        time_EndTime_processed_2 = datetime.strptime(time_EndTime_processed, "%H:%M:%S")
+        EndTime = int(datetime.strftime(time_EndTime_processed_2, "%H:%M").replace(":",""))
+        #####
+        if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):  
+            meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
+            for i in meetingTimeRange:
+                meeting_start_time = int(i[0].strftime("%H%M"))
+                meeting_end_time = int(i[1].strftime("%H%M"))
+                if StartTime in range(meeting_start_time,meeting_end_time) or EndTime in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(StartTime,EndTime) or meeting_end_time in range(StartTime,EndTime): 
+                    messages.error(request,'Error')
+            else:
+                form.save()
+                messages.success(request,'Room Edited Successfully')
+                return redirect('room')
+    return render(request, 'editRoom.html',context)
+
+    # if request.method == 'POST':
+    #     user = request.user
+    #     room_id = request.POST.get('room_Name')
+    #     date = request.POST.get('datePicker')
+    #     StartTime = datetime.strptime(request.POST.get('startTime'),"%H:%M").time()
+    #     StartTime = int(StartTime.strftime("%H%M"))
+    #     EndTime = datetime.strptime(request.POST.get('endTime'),"%H:%M").time()
+    #     editedEndTime = int(EndTime.strftime("%H%M"))
+    #     # if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
+    #     if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):  
+    #         meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
+    #         for i in meetingTimeRange:
+    #             meeting_start_time = int(i[0].strftime("%H%M"))
+    #             meeting_end_time = int(i[1].strftime("%H%M"))
+    #             if editedStartTime in range(meeting_start_time,meeting_end_time) or editedEndTime in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(editedStartTime,editedEndTime) or meeting_end_time in range(editedStartTime,editedEndTime):         
+    #                 messages.error(request, 'Sorry This room is Booked')
+    #                 return redirect('room')
+    #             else:
+    #                 messages.success(request, 'hello')
+    #                 print(form.data)
+    #                 if form.is_valid():
+    #                     form.save()
+    #                     messages.success('Saved')
+    #                 return redirect('room')
+   
+    # else:
+    #     form = RoomForm(instance=room)
+    #     context = {
+    #             'form':form,
+    #             'room':room
+    #         }
+    #     return render(request, 'editRoom.html',context)
 
 
 def grantMeetView(request):

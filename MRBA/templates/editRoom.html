@@ -4,14 +4,18 @@
 <form method="POST">
     {% csrf_token %}
     {{form.as_p}}
-    <input type="hidden" name='room_Name' value="{{room.room_Name_id}}">
+    {% comment %} {{form.room_Name}}
+    <input type="time" name="startTime" id="startTime" value="{{room.meeting_start_time|time:'H:i'}}">
+    <input type="time" name="endTime" id="endTime" value="{{room.meeting_end_time|time:'H:i'}}">
+    <input type="date" name="datePicker" id="datePicker" value="{{room.room_book_date|date:'Y-m-d'}}"> {% endcomment %}
+    {% comment %} <input type="text" name='room_Name' value="{{room.room_Name}}">
     <label for="timeStartEdit">Meeting Start Time</label>
     <input type="time" name="startTime" id="startTime" value="{{room.meeting_start_time|time:'H:i'}}">
     <br>
     <label for="timeEndEdit">Meeting End Time</label>
     <input type="time" name="endTime" id="endTime" value="{{room.meeting_end_time|time:'H:i'}}">
     <br>
-    <input type="date" name="datePicker" id="datePicker" value="{{room.room_book_date|date:'Y-m-d'}}">
+    <input type="date" name="datePicker" id="datePicker" value="{{room.room_book_date|date:'Y-m-d'}}"> {% endcomment %}
     {% comment %} PREFILLS THE ROOM BOOK DATE FROM DB {% endcomment %}
-    <input type="submit" value="submit">
+    <button type="submit">Submit</button>
 {% endblock body %}
