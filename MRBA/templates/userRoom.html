@@ -1,17 +1,45 @@
 {% extends 'navbar.html' %}
 
 {% block body %}
+<body onload=userRoomFunct()>
+<div class="dashContainer">
+    <div class="dashMenu">
+        <h5>Menu</h5>
+        <div class="menuList">
+        {% if admin %}
+        <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+            Room Bookings
+        </a>
+        {% else %}
+        <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+            Your Booked Rooms
+        </a>
+        {% endif %}
+        <a class="nav-link active" aria-current="page" href="Account" style='color:white;'>
+            Account
+        </a>
+        </div>
+    </div>
+<div class="dashBody">
 <div class="adminRoomView">
+<div class='adminform'>
+{% if userRoom %}
 {% for i in userRoom  %}
-<form id='adminform' action={% url 'editRoom' i.id %} method = "POST">
 {% csrf_token %}
 <li>{{i.room_Name}} at
 {{i.meeting_start_time}} to {{i.meeting_end_time}} on {{i.room_book_date}}
-<button>Edit</button>
+<input type="hidden" class="grantMeetBool" value={{i.grant_meeting}}>
+<a href ="{% url 'editRoom' i.id %}" class="EditButtonUser"><Button>Edit</Button></a> 
+<a href ="{%url 'deleteRoom' i.id %}" style="float: right;"><button>Delete Booking</button></a>
 <br>
 </li>
 </form>
 {% endfor %}
+{% else %}
+You Have No Bookings Available. Book One to View Here
+{% endif %}
+</div>
+</div>
 </div>
 
 {% endblock body %}

@@ -1,23 +1,22 @@
-from email import message
-from tokenize import group
 from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from matplotlib.style import context
 from requests import delete
 from app.models import Room, Room_Name 
 from app.forms import RoomForm
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def Index(request):
     room = RoomForm()
     today = datetime.today()
+    tomorrow = datetime.today() + timedelta(days=1)
     bookedrooms = Room.objects.all().filter(room_book_date = today)
-    context = {'room':room, 'bookedrooms':bookedrooms}
+    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
+    context = {'room':room, 'bookedrooms':bookedrooms,'bookedroomsTomorrow':bookedroomsTomorrow}
     if request.user.is_authenticated:
         return redirect('dashboard')
     else:
@@ -41,9 +40,21 @@ def LoginView(request):
 def Dashboard(request):
     room = RoomForm()
     today = datetime.today()
+    tomorrow = datetime.today() + timedelta(days=1)
     bookedrooms = Room.objects.all().filter(room_book_date = today)
+    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
     user = request.user
-    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user}
+    if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
+        admin = True
+        contex = {
+        'admin':admin,
+        'bookedroomsTomorrow':bookedroomsTomorrow,
+        'room':room, 
+        'bookedrooms':bookedrooms, 
+        'user':user
+    }
+        return render(request, 'dashboard.html', contex)
+    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow}
     if request.user.is_anonymous:
         return redirect('index')
     return render(request, 'dashboard.html', context)
@@ -149,12 +160,16 @@ def roomView(request):
     userRoom = Room.objects.filter(room_booked_by_user = user)
     adminRoom = Room.objects.all()
     if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
+        admin = True
         contex = {
+        'admin':admin,
         'adminRoom': adminRoom
     }
         return render(request, 'adminRoom.html', contex)
     else:
+        admin = False
         context={
+            'admin':admin,
             'userRoom': userRoom
         }
         return render(request, 'userRoom.html', context)
@@ -172,8 +187,12 @@ def editRoomView(request, id):
             'room':room
         }
     if form.is_valid():
+        # import ipdb
+        # ipdb.set_trace()
+        user = request.user
         room_id = request.POST.get('room_Name')
         date = request.POST.get('room_book_date')
+        # id = request.POST.get('id')
         #####
         time_StartTime_inapt = request.POST.get('meeting_start_time')    
         time_StartTime_processed = time_StartTime_inapt.replace('.','').upper()
@@ -184,18 +203,31 @@ def editRoomView(request, id):
         time_EndTime_processed = time_EndTime_inapt.replace('.','').upper()
         time_EndTime_processed_2 = datetime.strptime(time_EndTime_processed, "%H:%M:%S")
         EndTime = int(datetime.strftime(time_EndTime_processed_2, "%H:%M").replace(":",""))
-        #####
+              
+        #########
+        #userId = Room.objects.filter(id=id).values('room_booked_by_user')
+        # for k in userId:
+        #             if (k['room_booked_by_user']) != request.user.id or StartTime in range(meeting_start_time,meeting_end_time) or EndTime in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(StartTime,EndTime) or meeting_end_time in range(StartTime,EndTime): 
+        #                 messages.error(request,'Time range Unavailable')
+        #                 return redirect ('room')
+        #########
+
         if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):  
             meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
             for i in meetingTimeRange:
                 meeting_start_time = int(i[0].strftime("%H%M"))
                 meeting_end_time = int(i[1].strftime("%H%M"))
                 if StartTime in range(meeting_start_time,meeting_end_time) or EndTime in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(StartTime,EndTime) or meeting_end_time in range(StartTime,EndTime): 
-                    messages.error(request,'Error')
+                    messages.error(request,'Time range Unavailable')
+                    return redirect ('room')
             else:
                 form.save()
                 messages.success(request,'Room Edited Successfully')
                 return redirect('room')
+        else:
+            form.save()
+            messages.success(request,'Room Edited Successfully')
+            return redirect('room')
     return render(request, 'editRoom.html',context)
 
     # if request.method == 'POST':
@@ -244,6 +276,17 @@ def grantMeetView(request):
         return redirect('room')
 
 
+def deleteRoomBookingView(request, id):
+    user = request.user
+    if User.objects.filter(username=user):
+        room = Room.objects.get(id=id)
+        room.delete()
+        return redirect('room')
+    else:
+        messages.error(request, 'ERROR')
+        return redirect('/')
+
+
 def cancelBookingView(request, id):
     if request.method == 'POST':
         room = Room.objects.get(id = id)
@@ -251,7 +294,6 @@ def cancelBookingView(request, id):
         room.save()
         messages.success(request, 'Room Unbooked')
         return redirect('room')
-
 
 
 def Signout(request):

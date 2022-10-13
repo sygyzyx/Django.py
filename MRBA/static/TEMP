@@ -4,6 +4,7 @@ document.getElementById("datePicker").min = new Date().toISOString().slice(0, 10
 
 //Function GrantMeet (INITIAL)
 function grantmeet(){
+var grantMeetBool = document.getElementById('grantMeetBool').value;
 var value = document.getElementsByClassName('roomIdValue');
 var id = document.getElementsByClassName('labels');
 var toggleID = document.getElementsByClassName('toggle');
@@ -27,22 +28,10 @@ for (n=0, length = value.length; n<length; n++){
 }
 //#####
 
-function userRoomFunct() {
-  bool = document.getElementsByClassName('grantMeetBool');
-  EditId = document.getElementsByClassName('EditButtonUser')
-  for(i in bool){
-    bool[i].id = i + 'Bool'
-    EditId[i].id = i + 'Edit'
-    if (bool[i].value == 'True'){
-      document.getElementById(i+'Edit').style.display = 'none';
-    }
-  }
-  
-}
-
 //Function after Span Clicked
 var switchStatus = false;
 function spanClick(clicked_id)
+console.log("TEST")
 {
 if (!switchStatus) {
   var approve = window.confirm("Approve this Meeting ?");
@@ -55,7 +44,7 @@ if (!switchStatus) {
   }
 }
 else if (switchStatus) {
-  var approve = window.confirm("Cancel The Process ?");
+  var approve = window.confirm("this Meeting ?");
   if (approve){
   location.reload()
   }
@@ -67,9 +56,8 @@ function btnCancelClick(clicked_id){
   alert(document.getElementById(clicked_id+'CancelBtn'))
   }
 }
+
 //#####
-//Function after Delete Clicked
-deleteClicked = false;
 
 
 //Function to display Meeting CountDown Time

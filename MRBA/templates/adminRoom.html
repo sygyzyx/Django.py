@@ -1,9 +1,30 @@
-{% extends 'navbar.html' %}
+
+{% extends 'dashboard.html' %}
 
 {% block body %}
 
 <body onload=grantmeet()>
+<div class="dashContainer">
+  <div class="dashMenu">
+    <h5>Menu</h5>
+    <div class="menuList">
+      {% if admin %}
+      <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+        Room Bookings
+      </a>
+      {% else %}
+      <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+        Your Booked Rooms
+      </a>
+      {% endif %}
+      <a class="nav-link active" aria-current="page" href="Account" style='color:white;'>
+        Account
+      </a>
+    </div>
+  </div>
+<div class="dashBody">
   <div class="adminRoomView">
+    {% if adminRoom %}
     {% for i in adminRoom %}
     <div class='adminform'>
       <form action="Grantmeet" method="POST">
@@ -20,7 +41,9 @@
         </label>
         <div id="" style="display:none;" class="btnSubmitId"><button>Submit</button></div>
       </form>
-      <a href ="{% url 'editRoom' i.id %}" class = "btn btn-success">Edit</a>
+      {% comment %} EDIT BUTTON {% endcomment %}
+      {% comment %} <a href ="{% url 'editRoom' i.id %}" class = "btn btn-success">Edit</a> {% endcomment %}
+      <a href ="{%url 'deleteRoom' i.id %}" style="float: right;"><button>Delete Booking</button></a>
         <br>
         </li>
       <form action={% url 'cancelbook' i.id %} method = "POST">
@@ -31,5 +54,10 @@
     </div>
     {% endfor %}
   </div>
+    {% else %}
+    No Booked Rooms Today
+    {% endif %}
+
+</div>
 </body>
 {% endblock body %}
