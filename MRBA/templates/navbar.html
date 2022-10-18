@@ -27,19 +27,22 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+          {% comment %}
           {% if user.is_authenticated %}
-          <div class="activity_light" style="border-radius: 100px;
-          height: 10px;
-          width: 10px;
-          background-color: rgb(56, 227, 56);
-          -webkit-filter: blur(1px);
-          -moz-filter: blur(1px);
-          -o-filter: blur(1px);
-          -ms-filter: blur(1px);
-          filter: blur(1px);"></div>
-          <div class="navbar-nav">
-            <a class="nav-link" href="/" style="pointer-events: none; cursor: default;">Available</a>
-          </div>
+            <div class="activity_light" style="border-radius: 100px;
+            height: 10px;
+            width: 10px;
+            background-color: rgb(56, 227, 56);
+            -webkit-filter: blur(1px);
+            -moz-filter: blur(1px);
+            -o-filter: blur(1px);
+            -ms-filter: blur(1px);
+            filter: blur(1px);"></div>
+            <div class="navbar-nav">
+              <a class="nav-link" href="/" style="pointer-events: none; cursor: default;">Available</a>
+            </div>
           {% else %}
           <div class="activity_light" style="border-radius: 100px;
           height: 10px;
@@ -54,21 +57,24 @@
             <a class="nav-link" href="/" style="pointer-events: none; cursor: default;">Unavailable</a>
           </div>
           {% endif %}
+          {% endcomment %}
+            </li>
+          </ul>
             <ul class="navbar-nav">
             <li class="nav-item">
               {% comment %} <a class="nav-link active" aria-current="page" href="room">{% block yourRoomButton %}{% endblock yourRoomButton %}</a> {% endcomment %}
             </li>
           </ul>
           
-        </div>
         {% if user.is_authenticated %}
         <span class="navbar-text">
           Welcome, Mr. {{request.user.username}}
         </span>
-        <a href="signout">
+        <a href="Signout">
         <button class="btn btn-danger m-2">Log Out</button></a>  
         {% else %}
         {% endif %}
+        </div>
         </div>
       </div>
     </nav>
@@ -108,7 +114,7 @@
 
 {% endblock body %}
 
-<script src="{% static 'index.js' %}"></script>
+<script src="{% static 'js.js' %}"></script>
 <script src="{% static 'bootstrap.js' %}"></script>
 </body>
 

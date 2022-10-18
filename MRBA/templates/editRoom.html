@@ -1,0 +1,36 @@
+{% extends 'navbar.html' %}
+
+{% block body %}
+{% comment %} <div class="dashContainer">
+    <div class="dashMenu">
+      <h5>Menu</h5>
+      <div class="menuList">
+        <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+          Your Rooms
+        </a>
+        <a class="nav-link active" aria-current="page" href="Account" style='color:white;'>
+          Account
+        </a>
+      </div>
+    </div>
+<div class="dashBody"> {% endcomment %}
+<form method="POST">
+    {% csrf_token %}
+    {{form.as_p}}
+    {% comment %} {{form.room_Name}}
+    <input type="time" name="startTime" id="startTime" value="{{room.meeting_start_time|time:'H:i'}}">
+    <input type="time" name="endTime" id="endTime" value="{{room.meeting_end_time|time:'H:i'}}">
+    <input type="date" name="datePicker" id="datePicker" value="{{room.room_book_date|date:'Y-m-d'}}"> {% endcomment %}
+    {% comment %} <input type="text" name='room_Name' value="{{room.room_Name}}">
+    <label for="timeStartEdit">Meeting Start Time</label>
+    <input type="time" name="startTime" id="startTime" value="{{room.meeting_start_time|time:'H:i'}}">
+    <br>
+    <label for="timeEndEdit">Meeting End Time</label>
+    <input type="time" name="endTime" id="endTime" value="{{room.meeting_end_time|time:'H:i'}}">
+    <br>
+    <input type="date" name="datePicker" id="datePicker" value="{{room.room_book_date|date:'Y-m-d'}}"> {% endcomment %}
+    {% comment %} PREFILLS THE ROOM BOOK DATE FROM DB {% endcomment %}
+    <button type="submit">Update</button>
+</form>
+</div>
+{% endblock body %}

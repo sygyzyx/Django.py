@@ -8,29 +8,55 @@
 <div class="dashMenu">
   <h5>Menu</h5>
   <div class="menuList">
-    <a class="nav-link active" aria-current="page" href="room" style='color:white;'>
-      Your Rooms
+    {% if admin %}
+    <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+      Room Bookings
+    </a>
+    {% else %}
+    <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+      Your Booked Rooms
+    </a>
+    {% endif %}
+    <a class="nav-link active" aria-current="page" href="Account" style='color:white;'>
+      Account
     </a>
   </div>
 </div>
+
+{% comment %} {% if admin %}
 <div class="dashBody">
-    <form action="/status" method="POST">
-      {% csrf_token %}
-      <div class="d-inline">
-        Pick a room:
-        <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
-        <label for="datePicker">Pick a date:</label>
-        <input type="date" id="datePicker" name="datePicker" required>
-        <label for="appt">Select a time:</label>
-        <input type="time" id="startTime" name="startTime">
-        <label for="appt">To:</label>
-        <input type="time" id="endTime" name="endTime">
-        <button type='Submit'>Search</button>
-    </form>
-  </div>
-  <div class="dashRoomDisp">
-    {% if availability %}
-    <form action="bookroom" method="POST">
+{% else %} {% endcomment %}
+<div class="dashBody">
+  <form action="Status" method="POST" class='SearchForm'>
+    {% csrf_token %}
+    <div class="d-inline">
+      <div class="row g-3">
+        <div class="col">
+          Pick a room:
+      <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
+        </div>
+        <div class="col">
+          <label for="datePicker">Pick a date:</label><br>
+          <input type="date" id="datePicker" name="datePicker" required>
+        </div>
+        <div class="col">
+          <label for="appt">Start Time:</label>
+      <input type="time" id="startTime" name="startTime" required>
+        </div>
+        <div class="col">
+          <label for="appt">End Time:</label>
+      <input type="time" id="endTime" name="endTime" required>
+        </div>
+        <div class="col">
+          <button type='Submit'>Search</button>
+        </div>
+      </div>
+  </form>
+</div>
+{% comment %} {% endif %} {% endcomment %}
+<div class="dashRoomDisp">
+  {% if availability %}
+    <form action="Bookroom" method="POST">
       {% csrf_token %}
       <div class="row">
         <div class="col">
@@ -47,21 +73,32 @@
           <input type="hidden" name="bookEndTime" value="{{bookEndTime}}">
           <input type="hidden" name="user" value="{{user}}">
           <button type="Submit"> Book Now </button>
-          <a href="/"><button>Cancel
+        </form>
+          <a href="/"><button type="button">Cancel
           </button></a>
         </div>
       </div>
-    </form>
     {% else %}
-    {% endif %}
+    {% if bookedrooms %}
     <h3>Displaying Booked Rooms for Today</h3>
-        {% for i in bookedrooms %}
-        <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
-        {% endfor %}
-        </div>
-      </div>
+    {% for i in bookedrooms %}
+    <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+    {% endfor %}
+    {% else %}
+    <h3>No Room Bookings For Today</h3>
+    {% endif %}
     </div>
-  </div>
+    <div class="dashRoomDisp">
+    {% if bookedroomsTomorrow %}
+    <h3>Displaying Booked Rooms for Tomorrow</h3>
+    {% for i in bookedroomsTomorrow %}
+    <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+    {% endfor %}
+    </div>
+    {% else %}
+    <h3>No Room Bookings For Tomorrow</h3>
+    {% endif %}
+  {% endif %}
 </div>
 
 <!--Room Search Area-->

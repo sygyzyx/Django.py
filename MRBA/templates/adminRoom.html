@@ -1,1 +1,67 @@
-HELLO ADMIN ROOM
+
+{% extends 'dashboard.html' %}
+
+{% block body %}
+
+<body onload=grantmeet()>
+<div class="dashContainer">
+  <div class="dashMenu">
+    <h5>Menu</h5>
+    <div class="menuList">
+      {% if admin %}
+      <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+        Room Bookings
+      </a>
+      {% else %}
+      <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
+        Your Booked Rooms
+      </a>
+      {% endif %}
+      <a class="nav-link active" aria-current="page" href="Account" style='color:white;'>
+        Account
+      </a>
+    </div>
+  </div>
+<div class="dashBody">
+  <div class="adminRoomView">
+    {% if adminRoom %}
+    {% for i in adminRoom %}
+    <div class='adminform'>
+      <form action="Grantmeet" method="POST">
+        {% csrf_token %}
+        <input type="hidden" class="roomIdValue" id="value" name="value" value="{{i.id}}">
+        <input type="hidden" class="grantMeetingValue" id="boolValue" name="boolValue" value="{{i.grant_meeting}}">
+        {{i.room_Name}} at
+        {{i.meeting_start_time}} to {{i.meeting_end_time}} on Date {{i.room_book_date}}
+        by {{i.room_booked_by_user}}
+        | Room Status |
+        <label class="toggle">
+          <input type="checkbox">
+          <span class="labels" onclick="setTimeout(spanClick.bind(null,this.id),500);" data-on="Approved" data-off="Pending"></span>
+        </label>
+        <div id="" style="display:none;" class="btnSubmitId"><button>Submit</button></div>
+      </form>
+      {% comment %} EDIT BUTTON {% endcomment %}
+      {% comment %} <a href ="{% url 'editRoom' i.id %}" class = "btn btn-success">Edit</a> {% endcomment %}
+      {% if i.grant_meeting %}
+      <label class="bookedDisplay">Booked</label>
+      |
+      {% else %}
+      {% endif %}
+      <a href ="{%url 'deleteRoom' i.id %}">
+        <div id="" style="display:inline;" class="btnDelId" onclick="btnDelClick(this.id)"><button>Delete</button></div>
+      </a>
+      <a href={% url 'cancelbook' i.id %}>
+        <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)"><button>Cancel</button></div>
+        <div id="" style="display:none;" class="btnCancelIdConfirm"><button type="Submit" onclick="btnCancelClick()">Cancel</button></div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+    {% else %}
+    <h3>No Booked Rooms Today</h3>
+    {% endif %}
+
+</div>
+</body>
+{% endblock body %}

@@ -1,21 +1,22 @@
-from tokenize import group
 from django.contrib import messages
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from requests import delete
 from app.models import Room, Room_Name 
 from app.forms import RoomForm
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def Index(request):
     room = RoomForm()
     today = datetime.today()
+    tomorrow = datetime.today() + timedelta(days=1)
     bookedrooms = Room.objects.all().filter(room_book_date = today)
-    context = {'room':room, 'bookedrooms':bookedrooms}
-
+    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
+    context = {'room':room, 'bookedrooms':bookedrooms,'bookedroomsTomorrow':bookedroomsTomorrow}
     if request.user.is_authenticated:
         return redirect('dashboard')
     else:
@@ -27,7 +28,6 @@ def LoginView(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(username = username, password = password)
-
         if user is not None:
             login(request, user)
             messages.success(request, 'You are logged in')
@@ -40,12 +40,25 @@ def LoginView(request):
 def Dashboard(request):
     room = RoomForm()
     today = datetime.today()
+    tomorrow = datetime.today() + timedelta(days=1)
     bookedrooms = Room.objects.all().filter(room_book_date = today)
+    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
     user = request.user
-    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user}
+    if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
+        admin = True
+        contex = {
+        'admin':admin,
+        'bookedroomsTomorrow':bookedroomsTomorrow,
+        'room':room, 
+        'bookedrooms':bookedrooms, 
+        'user':user
+    }
+        return render(request, 'dashboard.html', contex)
+    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow}
     if request.user.is_anonymous:
         return redirect('index')
-    return render(request, 'dashboard.html',context)
+    return render(request, 'dashboard.html', context)
+
 
 def Signup(request):
     if request.method == 'POST':
@@ -70,6 +83,7 @@ def Signup(request):
             return redirect('index')    
     return redirect('index')
 
+
 def Status(request):
     if request.method == 'POST':
         room_id = request.POST.get('room_Name')
@@ -83,10 +97,6 @@ def Status(request):
         #from the input field in index.html we only take HOUR and MINUTES so "%H:%M"yyyyyyy
         if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):    
             meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
-<<<<<<< HEAD
-=======
-            print(meetingTimeRange)
->>>>>>> main
             for i in meetingTimeRange:
                 meeting_start_time = int(i[0].strftime("%H%M"))
                 meeting_end_time = int(i[1].strftime("%H%M"))
@@ -117,10 +127,9 @@ def Status(request):
     else:
         return redirect('dashboard')    
 
+
 def BookRoom(request):
     if request.method == "POST":
-        # import ipdb
-        # ipdb.set_trace()
         name = request.POST.get('roomName')
         room_id = Room_Name.objects.filter(room_Name = name).values('id')
         date = request.POST.get('Date')
@@ -128,7 +137,7 @@ def BookRoom(request):
         
         #TIME_CONVERSION
         #START_TIME
-        time_StartTime_inapt = request.POST.get('bookStartTime')
+        time_StartTime_inapt = request.POST.get('bookStartTime')    
         time_StartTime_processed = time_StartTime_inapt.replace('.','').upper()
         time_StartTime_processed_2 = datetime.strptime(time_StartTime_processed, "%I:%M %p")
         result_StartTime_time = datetime.strftime(time_StartTime_processed_2, "%H:%M")
@@ -145,14 +154,148 @@ def BookRoom(request):
         messages.success(request, 'You Have Booked a room')
         return redirect('dashboard')
 
+
 def roomView(request):
     user = request.user
-    if User.objects.filter(username=user)& User.objects.filter(is_staff=True):
-        print('True')
-        return render(request, 'adminRoom.html')
+    userRoom = Room.objects.filter(room_booked_by_user = user)
+    adminRoom = Room.objects.all()
+    if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
+        admin = True
+        contex = {
+        'admin':admin,
+        'adminRoom': adminRoom
+    }
+        return render(request, 'adminRoom.html', contex)
     else:
-        print('False')
-        return render(request, 'rooms.html')
+        admin = False
+        context={
+            'admin':admin,
+            'userRoom': userRoom
+        }
+        return render(request, 'userRoom.html', context)
+
+
+def accountView(request):
+    return render(request, 'account.html')
+
+
+def editRoomView(request, id):
+    room = get_object_or_404(Room, id = id)
+    form = RoomForm(request.POST or None, instance=room)
+    context = {
+            'form':form,
+            'room':room
+        }
+    if form.is_valid():
+        # import ipdb
+        # ipdb.set_trace()
+        user = request.user
+        room_id = request.POST.get('room_Name')
+        date = request.POST.get('room_book_date')
+        # id = request.POST.get('id')
+        #####
+        time_StartTime_inapt = request.POST.get('meeting_start_time')    
+        time_StartTime_processed = time_StartTime_inapt.replace('.','').upper()
+        time_StartTime_processed_2 = datetime.strptime(time_StartTime_processed, "%H:%M:%S")
+        StartTime = int(datetime.strftime(time_StartTime_processed_2, "%H:%M").replace(":",""))
+        #####
+        time_EndTime_inapt = request.POST.get('meeting_end_time')
+        time_EndTime_processed = time_EndTime_inapt.replace('.','').upper()
+        time_EndTime_processed_2 = datetime.strptime(time_EndTime_processed, "%H:%M:%S")
+        EndTime = int(datetime.strftime(time_EndTime_processed_2, "%H:%M").replace(":",""))
+              
+        #########
+        #userId = Room.objects.filter(id=id).values('room_booked_by_user')
+        # for k in userId:
+        #             if (k['room_booked_by_user']) != request.user.id or StartTime in range(meeting_start_time,meeting_end_time) or EndTime in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(StartTime,EndTime) or meeting_end_time in range(StartTime,EndTime): 
+        #                 messages.error(request,'Time range Unavailable')
+        #                 return redirect ('room')
+        #########
+
+        if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):  
+            meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
+            for i in meetingTimeRange:
+                meeting_start_time = int(i[0].strftime("%H%M"))
+                meeting_end_time = int(i[1].strftime("%H%M"))
+                if StartTime in range(meeting_start_time,meeting_end_time) or EndTime in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(StartTime,EndTime) or meeting_end_time in range(StartTime,EndTime): 
+                    messages.error(request,'Time range Unavailable')
+                    return redirect ('room')
+            else:
+                form.save()
+                messages.success(request,'Room Edited Successfully')
+                return redirect('room')
+        else:
+            form.save()
+            messages.success(request,'Room Edited Successfully')
+            return redirect('room')
+    return render(request, 'editRoom.html',context)
+
+    # if request.method == 'POST':
+    #     user = request.user
+    #     room_id = request.POST.get('room_Name')
+    #     date = request.POST.get('datePicker')
+    #     StartTime = datetime.strptime(request.POST.get('startTime'),"%H:%M").time()
+    #     StartTime = int(StartTime.strftime("%H%M"))
+    #     EndTime = datetime.strptime(request.POST.get('endTime'),"%H:%M").time()
+    #     editedEndTime = int(EndTime.strftime("%H%M"))
+    #     # if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
+    #     if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):  
+    #         meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
+    #         for i in meetingTimeRange:
+    #             meeting_start_time = int(i[0].strftime("%H%M"))
+    #             meeting_end_time = int(i[1].strftime("%H%M"))
+    #             if editedStartTime in range(meeting_start_time,meeting_end_time) or editedEndTime in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(editedStartTime,editedEndTime) or meeting_end_time in range(editedStartTime,editedEndTime):         
+    #                 messages.error(request, 'Sorry This room is Booked')
+    #                 return redirect('room')
+    #             else:
+    #                 messages.success(request, 'hello')
+    #                 print(form.data)
+    #                 if form.is_valid():
+    #                     form.save()
+    #                     messages.success('Saved')
+    #                 return redirect('room')
+   
+    # else:
+    #     form = RoomForm(instance=room)
+    #     context = {
+    #             'form':form,
+    #             'room':room
+    #         }
+    #     return render(request, 'editRoom.html',context)
+
+
+def grantMeetView(request):
+    if request.method == 'POST':
+        roomId = request.POST.get('value')
+        meetStartTime = request.POST.get('meetStartTime')
+        meetEndTime = request.POST.get('meetEndTime')
+        room = Room.objects.get(id=roomId)
+        room.grant_meeting = True
+        room.save()
+        messages.success(request, 'Room Granted')
+        return redirect('room')
+
+
+def deleteRoomBookingView(request, id):
+    user = request.user
+    if User.objects.filter(username=user):
+        room = Room.objects.get(id=id)
+        room.delete()
+        return redirect('room')
+    else:
+        messages.error(request, 'ERROR')
+        return redirect('/')
+
+
+def cancelBookingView(request, id):
+    user = request.user
+    if User.objects.filter(username=user):
+        room = Room.objects.get(id = id)
+        room.grant_meeting = False
+        room.save()
+        messages.success(request, 'Room Booking Cancelled')
+        return redirect('room')
+
 
 def Signout(request):
     logout(request)

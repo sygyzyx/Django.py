@@ -3,40 +3,74 @@
 
 {% block body %}
 
+
 <!--Room Display Area-->
   <div class="subContainer">
     <div class="viewArea">
-      <form action="status" method="POST">
+      <form action="Status" method="POST" class='SearchForm'>
         {% csrf_token %}
         <div class="d-inline">
           {% if availability %}
           <h2>{{ roomName }} is Available<h2>
           {% else %}
-          Pick a room:
+          <div class="row g-3">
+            <div class="col">
+              Pick a room:
           <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
-          <label for="datePicker">Pick a date:</label>
-          <input type="date" id="datePicker" name="datePicker" required>
-          <label for="appt">Select a time:</label>
+            </div>
+            <div class="col">
+              <label for="datePicker">Pick a date:</label><br>
+              <input type="date" id="datePicker" name="datePicker" required>
+            </div>
+            <div class="col">
+              <label for="appt">Start Time:</label>
           <input type="time" id="startTime" name="startTime" required>
-          <label for="appt">To:</label>
+            </div>
+            <div class="col">
+              <label for="appt">End Time:</label>
           <input type="time" id="endTime" name="endTime" required>
-          <button type='Submit'>Search</button>
+            </div>
+            <div class="col">
+              <button type='Submit'>Search</button>
+            </div>
+          </div>
           {% endif %}
       </form>
     </div>
     <div class="roomDisplay">
-      <h3>Displaying Booked Rooms for Today</h3>
-      {% for i in bookedrooms %}
-      <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
-      {% endfor %}
-      {% if availability %}
+    {% if availability %}
+
+      {% else %}
+        {% if bookedrooms %}
+        <h3>Displaying Booked Rooms for Today</h3>
+        {% for i in bookedrooms %}
+        <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+        {% endfor %}
+        {% else %}
+        <h3 style='text-align:center;'>No Bookings For Today</h3>
+        {% endif %}
+     
+    </div>
+    <div class="roomDisplay">
+        {% if bookedroomsTomorrow %}
+        <h3>Displaying Booked Romms for Tomorrow</h3>
+        {% for i in bookedroomsTomorrow %}
+        <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+        {% endfor %}
+        {% else %}
+        <h3 style='text-align:center;'>No Bookings For Tomorrow</h3>
+        {% endif %}
+
+      
+    {% endif %}
+    
+    {% if availability %}
       {{roomName}} on 
       {{Date}} at 
       {{bookStartTime}} to {{bookEndTime}} is Available
       <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button>
       {% else %}
-      {% endif %}
-    
+    {% endif %}
     </div>
     </div>
     
@@ -45,10 +79,10 @@
 
 <!--Login Area-->
   <div class="loginArea">
-    <form action="/login" method="POST">
+    <form action="/Login" method="POST">
         {% csrf_token %}
         <div class="loginHeader">
-          <h4>Login</h4>
+          <h4 style="color:white;">Login</h4>
         </div>
         <div class="inputField">
           <div class="userNameInput">
@@ -60,14 +94,13 @@
               />
           </div>
           <div class="LoginButton">
-            <button type='Submit' id="Loginbtn">Log In</button>
+            <button type='Submit' id="Loginbtn" style="color:white;">Log In</button>
           </div>
     </form>
       <div class="line"></div>
       <div style="position: relative; top: 40px; color: white;">Or</div>
       <div class="newAccount">
-        <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create a new
-          account
+        <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create account
         </button>
       </div>
     </div>
@@ -75,7 +108,7 @@
 <!--Login Area-->
 
 <!-- Sign Up Modal -->
-  <form action='signup/' method='POST'>
+  <form action='Signup/' method='POST'>
   {% csrf_token %}
   <div class="modal fade" id="SignUpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -125,12 +158,12 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <h5 class="modal-title w-100" id="exampleModalLabel">Please Log In To Continue</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          {% comment %} <h5 class="modal-title w-100" id="exampleModalLabel">Please Log In To Continue</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> {% endcomment %}
         </div>
         <div class="modal-body">         
-          <div class="mb-3">
-            
+          <div class="mb-3 text-center">
+            <h5>Please Log In</h5>
           </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
