@@ -3,6 +3,7 @@
 
 {% block body %}
 
+
 <!--Room Display Area-->
   <div class="subContainer">
     <div class="viewArea">
@@ -12,15 +13,27 @@
           {% if availability %}
           <h2>{{ roomName }} is Available<h2>
           {% else %}
-          Pick a room:
+          <div class="row g-3">
+            <div class="col">
+              Pick a room:
           <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
-          <label for="datePicker">Pick a date:</label>
-          <input type="date" id="datePicker" name="datePicker" required>
-          <label for="appt">Select a time:</label>
+            </div>
+            <div class="col">
+              <label for="datePicker">Pick a date:</label><br>
+              <input type="date" id="datePicker" name="datePicker" required>
+            </div>
+            <div class="col">
+              <label for="appt">Start Time:</label>
           <input type="time" id="startTime" name="startTime" required>
-          <label for="appt">To:</label>
+            </div>
+            <div class="col">
+              <label for="appt">End Time:</label>
           <input type="time" id="endTime" name="endTime" required>
-          <button type='Submit'>Search</button>
+            </div>
+            <div class="col">
+              <button type='Submit'>Search</button>
+            </div>
+          </div>
           {% endif %}
       </form>
     </div>
@@ -87,8 +100,7 @@
       <div class="line"></div>
       <div style="position: relative; top: 40px; color: white;">Or</div>
       <div class="newAccount">
-        <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create a new
-          account
+        <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create account
         </button>
       </div>
     </div>
@@ -146,12 +158,12 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header text-center">
-          <h5 class="modal-title w-100" id="exampleModalLabel">Please Log In To Continue</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          {% comment %} <h5 class="modal-title w-100" id="exampleModalLabel">Please Log In To Continue</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> {% endcomment %}
         </div>
         <div class="modal-body">         
-          <div class="mb-3">
-            
+          <div class="mb-3 text-center">
+            <h5>Please Log In</h5>
           </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>

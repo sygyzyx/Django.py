@@ -70,6 +70,12 @@ function btnCancelClick(clicked_id){
 //#####
 //Function after Delete Clicked
 deleteClicked = false;
+function btnDelClick(clicked_id){
+  var approve = window.approve('Do You Want To Delete This Meeing ?')
+  if (approve){
+    
+  }
+}
 
 
 //Function to display Meeting CountDown Time

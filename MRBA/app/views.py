@@ -288,11 +288,12 @@ def deleteRoomBookingView(request, id):
 
 
 def cancelBookingView(request, id):
-    if request.method == 'POST':
+    user = request.user
+    if User.objects.filter(username=user):
         room = Room.objects.get(id = id)
         room.grant_meeting = False
         room.save()
-        messages.success(request, 'Room Unbooked')
+        messages.success(request, 'Room Booking Cancelled')
         return redirect('room')
 
 

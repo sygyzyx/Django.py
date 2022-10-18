@@ -43,19 +43,23 @@
       </form>
       {% comment %} EDIT BUTTON {% endcomment %}
       {% comment %} <a href ="{% url 'editRoom' i.id %}" class = "btn btn-success">Edit</a> {% endcomment %}
-      <a href ="{%url 'deleteRoom' i.id %}" style="float: right;"><button>Delete Booking</button></a>
-        <br>
-        </li>
-      <form action={% url 'cancelbook' i.id %} method = "POST">
-        {% csrf_token %}
-        <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)"><button>Cancel This Meeting</button></div>
+      {% if i.grant_meeting %}
+      <label class="bookedDisplay">Booked</label>
+      |
+      {% else %}
+      {% endif %}
+      <a href ="{%url 'deleteRoom' i.id %}">
+        <div id="" style="display:inline;" class="btnDelId" onclick="btnDelClick(this.id)"><button>Delete</button></div>
+      </a>
+      <a href={% url 'cancelbook' i.id %}>
+        <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)"><button>Cancel</button></div>
         <div id="" style="display:none;" class="btnCancelIdConfirm"><button type="Submit" onclick="btnCancelClick()">Cancel</button></div>
-      </form>
+      </a>
     </div>
     {% endfor %}
   </div>
     {% else %}
-    No Booked Rooms Today
+    <h3>No Booked Rooms Today</h3>
     {% endif %}
 
 </div>

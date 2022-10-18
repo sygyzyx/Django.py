@@ -30,15 +30,27 @@
   <form action="Status" method="POST" class='SearchForm'>
     {% csrf_token %}
     <div class="d-inline">
-      Pick a room:
+      <div class="row g-3">
+        <div class="col">
+          Pick a room:
       <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
-      <label for="datePicker">Pick a date:</label>
-      <input type="date" id="datePicker" name="datePicker" required>
-      <label for="appt">Select a time:</label>
-      <input type="time" id="startTime" name="startTime">
-      <label for="appt">To:</label>
-      <input type="time" id="endTime" name="endTime">
-      <button type='Submit'>Search</button>
+        </div>
+        <div class="col">
+          <label for="datePicker">Pick a date:</label><br>
+          <input type="date" id="datePicker" name="datePicker" required>
+        </div>
+        <div class="col">
+          <label for="appt">Start Time:</label>
+      <input type="time" id="startTime" name="startTime" required>
+        </div>
+        <div class="col">
+          <label for="appt">End Time:</label>
+      <input type="time" id="endTime" name="endTime" required>
+        </div>
+        <div class="col">
+          <button type='Submit'>Search</button>
+        </div>
+      </div>
   </form>
 </div>
 {% comment %} {% endif %} {% endcomment %}

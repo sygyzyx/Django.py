@@ -13,7 +13,7 @@ select{
 }
 input{
     border-radius: 5px;
-    width: 280px;
+    width: 80%;
     height: 40px;
     border: 2px solid #c6717186;
 }
@@ -65,7 +65,7 @@ form{
 }
 #Loginbtn{
     margin-top: 15px;
-    width: 280px;
+    width: 80%;
     height: 40px;
     border: #FFFFFF;
     border-radius: 5px;
@@ -84,8 +84,8 @@ form{
 }
 #newAccountBtn{
     border: none;
-    width: 280px;
-    height: 40px;
+    width: 80%;
+    height: 100%;
     background-color: #58d778;
     border-radius: 5px;
 }
@@ -151,9 +151,6 @@ form{
     text-align: left;
     padding: 20px;
     border: 1px solid black;
-}
-.btnCancelId{
-    display: inline;
 }
 
 /* TOGGLE SWITCH */
@@ -226,3 +223,11 @@ form{
     transform: translateX(var(--width));
   }
   /* TOGGLE SWITCH */
+
+  .bookedDisplay{
+    border-radius:5px; 
+    border:1px solid black; 
+    color:white; 
+    background-color:green; 
+    padding: 3px;
+  }
