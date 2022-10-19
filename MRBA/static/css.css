@@ -239,5 +239,7 @@ form{
   }
   .form-control{
     height: 10%;
-  
+  }
+  .form-label{
+    float: left;
   }
