@@ -68,7 +68,7 @@
           
         {% if user.is_authenticated %}
         <span class="navbar-text">
-          Welcome, Mr. {{request.user.username}}
+          Welcome, {{request.user.username}}
         </span>
         <a href="Signout">
         <button class="btn btn-danger m-2">Log Out</button></a>  

@@ -96,6 +96,11 @@
           <div class="LoginButton">
             <button type='Submit' id="Loginbtn" style="color:white;">Log In</button>
           </div>
+          <div style="margin:15px">
+          <label style="color:white;">Forgot Password ? </label>
+          <a href="{% url 'password_reset' %}" style="color:orange;"> Reset it </a>
+          </button>
+      </div>
     </form>
       <div class="line"></div>
       <div style="position: relative; top: 40px; color: white;">Or</div>
@@ -103,7 +108,6 @@
         <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create account
         </button>
       </div>
-    </div>
   </div>
 <!--Login Area-->
 

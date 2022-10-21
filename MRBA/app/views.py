@@ -2,12 +2,20 @@ from django.contrib import messages
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from requests import delete
 from app.models import Room, Room_Name 
 from app.forms import RoomForm
 from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime, timedelta
+from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.core.mail import EmailMessage
+from django.contrib.auth import get_user_model
+from .tokens import *
 
 
 def Index(request):
@@ -68,6 +76,11 @@ def Signup(request):
         email = request.POST.get('email')
         pass1 = request.POST.get('pass1')
         pass2 = request.POST.get('pass2')
+
+        # if User.objects.filter(email = email).exists():
+        #     messages.error(request, 'Email already in use')
+        #     return redirect('index')
+        
         if User.objects.filter(username = username).exists():
             messages.error(request, 'Username already Exists')
             return redirect('index')
@@ -75,12 +88,43 @@ def Signup(request):
             messages.error(request,'Please enter matching passwords')
             return redirect('index')
         else:
-            user = User.objects.create_user(username = username, first_name = f_name, last_name = l_name, email = email, password = pass1)
+            user = User.objects.create_user(username = username, first_name = f_name, last_name = l_name, email = email, password = pass1, is_active=False)
+            #USER IS SAVED BUT CANNOT LOGIN SINCE IS_ACTIVE IS FALSE
             group = Group.objects.get(name='user') 
             group.user_set.add(user)
             user.save()
-            messages.success(request, 'You are now a registered User !! Please continue to Login')
+            subject = 'Ready To Book Your Meeting ?'
+            message = render_to_string('template_activate_account.html', {
+                                        'user': user.username,
+                                        'domain': get_current_site(request).domain,
+                                        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                        'token': account_activation_token.make_token(user),
+                                        'protocol': 'https' if request.is_secure() else 'http'
+                                    })
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [user.email,]
+            send_mail( subject, message, email_from, recipient_list )
+            messages.success(request, 'Please Check Your Email For Verification')
             return redirect('index')    
+    return redirect('index')
+
+
+def Activate(request, uidb64, token):
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, 'Thank you for your email confirmation. Now you can login to your account.')
+        return redirect('index')
+    else:
+        messages.error(request, 'Activation link is invalid!')
+    
     return redirect('index')
 
 
@@ -176,7 +220,11 @@ def roomView(request):
 
 
 def accountView(request):
-    return render(request, 'account.html')
+    user = request.user
+    if not user.is_anonymous:
+        return render(request, 'account.html')
+    else:
+        return redirect('/')
 
 
 def editRoomView(request, id):
