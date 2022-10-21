@@ -77,6 +77,18 @@ function btnDelClick(clicked_id){
   }
 }
 
+//EMAIL VALIDATION IN JS
+function emailValid(){
+  email = document.getElementById('email').value
+  if (!email.includes('@')){
+    document.getElementById('error').style.display ='inline-block';
+    document.getElementById('error').innerHTML = ' ! ';
+  }
+  else{
+    document.getElementById('error').innerHTML = '';
+    document.getElementById('error').style.display ='none';
+  }
+}
 
 //Function to display Meeting CountDown Time
 // var countDownDate = new Date("Jan 5, 2024 15:37:25").getTime();

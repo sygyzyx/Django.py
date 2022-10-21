@@ -1,12 +1,15 @@
 /* GLOBAL */
+
 body{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     /* background-color: #261C15 !important; */
-    background-color: white !important;
+    /* background-color:#356682 !important; */
+    background-image: linear-gradient(145deg, #57dac9 , #be4d68) !important;
 }
 select{
     border-radius: 7px;
     text-align: center;
-    border: 2px solid #c6717186;
+    border: 2px solid #9b9ea0;
 }
 .SearchForm{
     text-align: center;
@@ -15,7 +18,7 @@ input{
     border-radius: 5px;
     width: 80%;
     height: 40px;
-    border: 2px solid #c6717186;
+    border: 2px solid #9b9ea0;
 }
 .navItem{
     padding: 10px;
@@ -23,7 +26,17 @@ input{
 form{
     display: inline;
 }
+label{
+  text-align: center;
+  font-size: medium;
+}
 /* GLOBAL */
+
+/* NAVBAR */
+.navbar,.navBar{
+  border-radius: 7px !important;
+}
+
 
 /* INDEX */
 .loginText{
@@ -35,23 +48,20 @@ form{
     border-radius: 3px;
 }
 .subContainer{
-    display: grid;
-    grid-template-columns: 70% 30%;
-    background-color: #303e47;
-    margin: 10px;
-    padding: 3px;
+  display: grid;
+  grid-template-columns: 68% 32%;
+  
 }   
 .viewArea{
     text-align: center;
     padding: 10px;
-    background-color: #EEF5DB;
-    height: 500px;
-    
+    height: 100vh;
 }
 .loginArea{
-    text-align: center;
-    background-color: #3E505B;
-    padding: 10px;
+  border-radius: 3px;
+  text-align: center;
+  background-color: #3E505B;
+  padding: 10px;
 }
 .userNameInput{
     margin-top: 20px;
@@ -60,38 +70,46 @@ form{
     margin-top: 20px;
 }
 .LoginButton{
-    margin-top: 10px;
+  
+  margin-top: 10px;
     
 }
 #Loginbtn{
-    margin-top: 15px;
-    width: 80%;
-    height: 40px;
-    border: #FFFFFF;
-    border-radius: 5px;
-    background-color: #e86450c5;
+
+  margin-top: 15px;
+  width: 80%;
+  height: 40px;
+  border: #FFFFFF;
+  border-radius: 5px;
+  background-color: #4e98ad;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#Loginbtn:hover{
+  /* box-shadow: 2px 2px 3px inset; */
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.2), 0 6px 20px 0 rgba(255, 255, 255, 0.19);
 }
 .inputField{
-    border-radius: 5px;
-    margin-top: 30px;
-    padding: 2px;
-    height: 330px;
+  border-radius: 5px;
+  margin-top: 30px;
+  padding: 2px;
    
 }
 .newAccount{
-    position: relative;
-    top: 50px;
+  position: relative;
+  top: 50px;
 }
 #newAccountBtn{
-    border: none;
-    width: 80%;
-    height: 100%;
-    background-color: #58d778;
-    border-radius: 5px;
+  color: white;
+  border: none;
+  width: 80%;
+  height: 45px;
+  margin-top: 10px;
+  background-color: #bb425e;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .line{
     position: relative;
-    top: 30px;
     height: 2px;
     background-color: #ffffff;
 }
@@ -114,7 +132,8 @@ form{
     text-align: left;
     padding: 10px 30px;
     margin-top: 20px;
-    background-color: #9dff00;
+    background-color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
 }
 .dashContainer{
     display: grid;
@@ -123,6 +142,7 @@ form{
     margin: 10px;
     padding: 3px;
     height: 100vh;
+
 } 
 .dashMenu{
     text-align: center;
@@ -153,22 +173,23 @@ form{
     border: 1px solid black;
 }
 
+/* ####### */
 /* TOGGLE SWITCH */
-.toggle {
-    --width: 80px;
-    --height: calc(var(--width) / 3);
-    top:7px;
-    position: relative;
-    display: inline-block;
-    width: var(--width);
-    height: var(--height);
-    cursor: pointer;
-  }
+  .toggle {
+      --width: 80px;
+      --height: calc(var(--width) / 3);
+      top:7px;
+      position: relative;
+      display: inline-block;
+      width: var(--width);
+      height: var(--height);
+      cursor: pointer;
+    }
 
-  .toggle input {
-    
-    display: none;
-  }
+    .toggle input {
+      
+      display: none;
+    }
 
   .toggle .labels {
     border-radius: 3px;               
@@ -222,24 +243,97 @@ form{
   .toggle input:checked~.labels::before {
     transform: translateX(var(--width));
   }
-  /* TOGGLE SWITCH */
+/* TOGGLE SWITCH */
+/* ####### */
 
-  .bookedDisplay{
-    border-radius:5px; 
-    border:1px solid black; 
-    color:white; 
-    background-color:green; 
-    padding: 3px;
-  }
+.bookedDisplay{
+  border-radius:5px; 
+  border:1px solid black; 
+  color:white; 
+  background-color:green; 
+  padding: 3px;
+}
+#resetPasswordLink{
+  color:#e6817f;
+  font-size: 15px;
+  text-decoration: none;
+}
+.forgotPassLink{
+  margin: 10px;
+}
+.orText{
+  color: white;
+  margin-top: 10px;
+}
+/* ######################### WIDGET TWEAKS ################################# */
+.form-group{
+  margin:5% 10% ;
+}
+.form-control{
+  height: 10%;
+  color: white!important;
+  /* background-color: rgb(72, 72, 72) !important;   */
+}
+.form-label{
+  color: white;
+  float: left;
+}
+.form-control:focus{
+  
+}
 
-  /* ######################### WIDGET TWEAKS ################################# */
-  .form-group{
-    width: 30%; 
-    margin:10px;
-  }
-  .form-control{
-    height: 10%;
-  }
-  .form-label{
-    float: left;
-  }
+#SearchBtn{
+  vertical-align: middle;
+  border: 2px solid #9b9ea0;
+  border-radius: 5px;
+  background-color: #fff;
+  color: black;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#SearchBtn:hover{
+  box-shadow: 0 4px 8px 0 rgba(232, 54, 205, 0.2), 0 6px 20px 0 rgba(232, 54, 205, 0.2);
+}
+
+#SignUpModal{
+  background-image: linear-gradient(45deg, #57c2da , rgb(102, 130, 53,0.3)) !important;
+  /* background-color: rgba(0,0,0,0.5); */
+}
+.modal-content{
+  background-color: #192025;
+}
+.btn-close{
+  background-color: white !important;
+}
+.modal-header{
+  margin: 5px;
+  background-color: #192025;
+  color: white;
+}
+.modal-body{
+  background-color: #192025;
+}
+
+.modal-footer{
+  margin: 5px;
+  background-color: #192025;
+  color: white;
+}
+#error{
+  display: none;
+  border-radius: 5px;
+  background-color: #ef5b5b;
+  float: right;
+  padding: 0 10px;
+  color: white;
+}
+.passwordResetBody{
+  height: 100vh;
+}
+.PassResetLinkButton{
+  background-color: #ffffff;
+  border: 2px solid #b4b4b4;
+  border-radius: 5px;
+  margin-top: 5px;
+  float: right;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

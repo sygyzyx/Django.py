@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.db.models import Q
+from django.forms import EmailField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from app.models import Room, Room_Name 
@@ -80,7 +81,6 @@ def Signup(request):
         # if User.objects.filter(email = email).exists():
         #     messages.error(request, 'Email already in use')
         #     return redirect('index')
-        
         if User.objects.filter(username = username).exists():
             messages.error(request, 'Username already Exists')
             return redirect('index')
@@ -105,7 +105,7 @@ def Signup(request):
             recipient_list = [user.email,]
             send_mail( subject, message, email_from, recipient_list )
             messages.success(request, 'Please Check Your Email For Verification')
-            return redirect('index')    
+            return redirect('index')
     return redirect('index')
 
 
