@@ -6,7 +6,7 @@
 <!--Room Search Area-->
 <div class="dashContainer">
 <div class="dashMenu">
-  <h5>Menu</h5>
+  <h5 class='menuHeader'>Menu</h5>
   <div class="menuList">
     {% if admin %}
     <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
@@ -66,11 +66,11 @@
       <div class="row">
         <div class="col">{{roomName}} on
           {{Date}} at
-          {{bookStartTime}} to {{bookEndTime}} is Available
+          {{bookStartTime|date:"h:i A"}} to {{bookEndTime|date:"h:i A"}} is Available
           <input type="hidden" name="roomName" value="{{roomName}}">
           <input type="hidden" name="Date" value="{{Date}}">
-          <input type="hidden" name="bookStartTime" value="{{bookStartTime}}">
-          <input type="hidden" name="bookEndTime" value="{{bookEndTime}}">
+          <input type="hidden" id='bookStartTime' name="bookStartTime" value="{{bookStartTime|date:"h:i A"}}">
+          <input type="hidden" id='bookEndTime' name="bookEndTime" value="{{bookEndTime|date:"h:i A"}}">
           <input type="hidden" name="user" value="{{user}}">
           <button type="Submit"> Book Now </button>
         </form>

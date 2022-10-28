@@ -44,7 +44,7 @@
         {% if bookedrooms %}
         <h3>Displaying Booked Rooms for Today</h3>
         {% for i in bookedrooms %}
-        <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+        <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
         {% else %}
         <h3 style='text-align:left;'>No Bookings For Today</h3>
@@ -54,7 +54,7 @@
         {% if bookedroomsTomorrow %}
         <h3>Displaying Booked Rooms for Tomorrow</h3>
         {% for i in bookedroomsTomorrow %}
-        <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+        <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
         {% else %}
         <h3 style='text-align:left;'>No Bookings For Tomorrow</h3>
@@ -132,7 +132,7 @@
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Email address:</label>
-            <p id="error"></p>
+            <p id="error" title="Enter a valid email"></p>
             <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" onkeydown="emailValid()">
           </div>
           <div class="mb-3">
