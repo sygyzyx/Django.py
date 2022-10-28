@@ -6,7 +6,7 @@
 <body onload=grantmeet()>
 <div class="dashContainer">
   <div class="dashMenu">
-    <h5>Menu</h5>
+    <h5 class='menuHeader'>Menu</h5>
     <div class="menuList">
       {% if admin %}
       <a class="nav-link active" aria-current="page" href="Room" style='color:white;'>
@@ -48,12 +48,13 @@
       |
       {% else %}
       {% endif %}
+      <div id="" style="display:inline;" class="btnDelId" onclick="btnDelClick(this.id)"><button>Delete</button></div>
       <a href ="{%url 'deleteRoom' i.id %}">
-        <div id="" style="display:inline;" class="btnDelId" onclick="btnDelClick(this.id)"><button>Delete</button></div>
+        <div id='roomDeleteButton' style="display:none;" class="btnDelConfirm" onclick="btnDelClick(this.id)"><button>Confirm Deletion</button></div>
       </a>
+      <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)"><button>Cancel</button></div>
       <a href={% url 'cancelbook' i.id %}>
-        <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)"><button>Cancel</button></div>
-        <div id="" style="display:none;" class="btnCancelIdConfirm"><button type="Submit" onclick="btnCancelClick()">Cancel</button></div>
+        <div id="" style="display:none;" class="btnCancelIdConfirm"><button type="Submit" onclick="btnCancelClick()">Confirm Cancel</button></div>
       </a>
     </div>
     {% endfor %}

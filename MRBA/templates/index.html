@@ -1,25 +1,25 @@
 {% extends 'navbar.html' %}
-
-
 {% block body %}
+{% load static %}
 
 
 <!--Room Display Area-->
-  <div class="subContainer">
-    <div class="viewArea">
+<div class="subContainer">
+  <div class="viewArea">
+    <div class="col">
       <form action="Status" method="POST" class='SearchForm'>
         {% csrf_token %}
         <div class="d-inline">
           {% if availability %}
           <h2>{{ roomName }} is Available<h2>
           {% else %}
-          <div class="row g-3">
+          <div class="row">
             <div class="col">
-              Pick a room:
+              <label>Pick a Room:</label>
           <label for="roomName" name='roomName'>{{ room.room_Name }}</label>
             </div>
             <div class="col">
-              <label for="datePicker">Pick a date:</label><br>
+              <label for="datePicker">Pick a Date:</label><br>
               <input type="date" id="datePicker" name="datePicker" required>
             </div>
             <div class="col">
@@ -30,49 +30,47 @@
               <label for="appt">End Time:</label>
           <input type="time" id="endTime" name="endTime" required>
             </div>
-            <div class="col">
-              <button type='Submit'>Search</button>
+            <div class="col mt-2">
+              <button type='Submit' id='SearchBtn'>Search<img src="{%static 'searchbtn.png'%}" alt="search" width="22" height="22"></button>
             </div>
           </div>
           {% endif %}
       </form>
     </div>
+  <div class="col02">
     <div class="roomDisplay">
     {% if availability %}
-
       {% else %}
         {% if bookedrooms %}
         <h3>Displaying Booked Rooms for Today</h3>
         {% for i in bookedrooms %}
-        <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+        <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
         {% else %}
-        <h3 style='text-align:center;'>No Bookings For Today</h3>
+        <h3 style='text-align:left;'>No Bookings For Today</h3>
         {% endif %}
-     
     </div>
     <div class="roomDisplay">
         {% if bookedroomsTomorrow %}
-        <h3>Displaying Booked Romms for Tomorrow</h3>
+        <h3>Displaying Booked Rooms for Tomorrow</h3>
         {% for i in bookedroomsTomorrow %}
-        <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+        <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
         {% else %}
-        <h3 style='text-align:center;'>No Bookings For Tomorrow</h3>
+        <h3 style='text-align:left;'>No Bookings For Tomorrow</h3>
+        {% endif %}     
         {% endif %}
-
-      
-    {% endif %}
-    
-    {% if availability %}
-      {{roomName}} on 
-      {{Date}} at 
-      {{bookStartTime}} to {{bookEndTime}} is Available
-      <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button>
-      {% else %}
-    {% endif %}
+        {% if availability %}
+        {{roomName}} on 
+        {{Date}} at 
+        {{bookStartTime}} to {{bookEndTime}} is Available
+        {% comment %} <button type="button" id="button" data-bs-toggle="modal" data-bs-target="#RoomBookModal"> Book Now </button> {% endcomment %}
+        {% else %}
+        {% endif %}
+      </div>
     </div>
-    </div>
+  </div>
+</div>
     
 <!--Room Display Area-->
 
@@ -96,18 +94,16 @@
           <div class="LoginButton">
             <button type='Submit' id="Loginbtn" style="color:white;">Log In</button>
           </div>
-          <div style="margin:15px">
-          <label style="color:white;">Forgot Password ? </label>
-          <a href="{% url 'password_reset' %}" style="color:orange;"> Reset it </a>
-          </button>
+          <div class="forgotPassLink">
+          <a href="{% url 'password_reset' %}" id="resetPasswordLink">Forgot Password ?</a>
+        </div>
       </div>
+      
     </form>
-      <div class="line"></div>
-      <div style="position: relative; top: 40px; color: white;">Or</div>
-      <div class="newAccount">
+    <div class="line"></div>
+      <div class="orText">Or</div>
         <button type="button" id="newAccountBtn" data-bs-toggle="modal" data-bs-target="#SignUpModal">Create account
         </button>
-      </div>
   </div>
 <!--Login Area-->
 
@@ -124,7 +120,7 @@
         <div class="modal-body">
           <div class="mb-3">
             <label for="Username" class="form-label">Enter a Username:</label>
-            <input type="text" class="form-control" id="Username" name="Username" placeholder="Create a Username">
+            <input type="text" class="form-control" id="Username" name="Username" placeholder="Create a Username" required>
           </div>
           <div class="mb-3">
             <label for="first_Name" class="form-label">First Name:</label>
@@ -136,7 +132,8 @@
           </div>
           <div class="mb-3">
             <label for="email" class="form-label">Email address:</label>
-            <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email">
+            <p id="error" title="Enter a valid email"></p>
+            <input type="text" class="form-control" id="email" name="email" placeholder="Enter Email" onkeydown="emailValid()">
           </div>
           <div class="mb-3">
             <label for="pass1" class="form-label">Create a Password:</label>
@@ -148,7 +145,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Exit</button>
-          <button type='Submit' class="btn btn-primary">Submit</button>
+          <button type='Submit' class="btn btn-primary">Register</button>
         </div>
       </div>
     </div>
@@ -175,6 +172,7 @@
       </div>
     </div>
   </div>
+</div>
   <!--Please Login Modal-->
 
 {% endblock body %}

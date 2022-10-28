@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.db.models import Q
+from django.forms import EmailField
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from app.models import Room, Room_Name 
@@ -62,7 +63,7 @@ def Dashboard(request):
         'user':user
     }
         return render(request, 'dashboard.html', contex)
-    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow}
+    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow,'admin':admin}
     if request.user.is_anonymous:
         return redirect('index')
     return render(request, 'dashboard.html', context)
@@ -80,7 +81,6 @@ def Signup(request):
         # if User.objects.filter(email = email).exists():
         #     messages.error(request, 'Email already in use')
         #     return redirect('index')
-        
         if User.objects.filter(username = username).exists():
             messages.error(request, 'Username already Exists')
             return redirect('index')
@@ -105,7 +105,7 @@ def Signup(request):
             recipient_list = [user.email,]
             send_mail( subject, message, email_from, recipient_list )
             messages.success(request, 'Please Check Your Email For Verification')
-            return redirect('index')    
+            return redirect('index')
     return redirect('index')
 
 
@@ -120,7 +120,7 @@ def Activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        messages.success(request, 'Thank you for your email confirmation. Now you can login to your account.')
+        messages.success(request, 'Thank you for your email verification. Now you can login to your account.')
         return redirect('index')
     else:
         messages.error(request, 'Activation link is invalid!')
@@ -129,6 +129,8 @@ def Activate(request, uidb64, token):
 
 
 def Status(request):
+    # import ipdb
+    # ipdb.set_trace()
     if request.method == 'POST':
         room_id = request.POST.get('room_Name')
         date = request.POST.get('datePicker')
@@ -181,7 +183,7 @@ def BookRoom(request):
         
         #TIME_CONVERSION
         #START_TIME
-        time_StartTime_inapt = request.POST.get('bookStartTime')    
+        time_StartTime_inapt = request.POST.get('bookStartTime')  
         time_StartTime_processed = time_StartTime_inapt.replace('.','').upper()
         time_StartTime_processed_2 = datetime.strptime(time_StartTime_processed, "%I:%M %p")
         result_StartTime_time = datetime.strftime(time_StartTime_processed_2, "%H:%M")

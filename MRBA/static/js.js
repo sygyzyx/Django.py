@@ -4,6 +4,8 @@ document.getElementById("datePicker").min = new Date().toISOString().slice(0, 10
 
 //Function GrantMeet (INITIAL)
 function grantmeet(){
+var deleteId = document.getElementsByClassName('btnDelId');
+var deleteConfirm = document.getElementsByClassName('btnDelConfirm');
 var value = document.getElementsByClassName('roomIdValue');
 var id = document.getElementsByClassName('labels');
 var toggleID = document.getElementsByClassName('toggle');
@@ -14,6 +16,8 @@ var grantMeetValue = document.getElementsByClassName('grantMeetingValue')
 for (n=0, length = value.length; n<length; n++){
   var Id = value[n].value
     id[n].id = Id;
+    deleteConfirm[n].id = Id + 'delIDConfirm';
+    deleteId[n].id = Id + 'delID';
     toggleID[n].id = Id + 'tgl';
     btnSubmit[n].id = Id +'submitID';
     btnCancel[n].id = Id + 'CancelBtn';
@@ -61,21 +65,54 @@ else if (switchStatus) {
   }
 }
 }
-function btnCancelClick(clicked_id){
-  var approve = window.confirm(clicked_id);
+//
+var cancelSwitchStatus = false;
+function btnCancelClick(clicked_id)
+{
+if (!cancelSwitchStatus) {
+  var approve = window.confirm("Cancel this Meeting ?");
   if (approve){
-  alert(document.getElementById(clicked_id+'CancelBtn'))
+  document.getElementById(clicked_id).style.display = 'none';
+  document.getElementById(clicked_id+'Confirm').style.display = "inline-block";
+  cancelSwitchStatus = true;
+  } 
+  else{
+    location.reload()
   }
 }
+else if (cancelSwitchStatus) {
+  var approve = window.confirm("Cancel The Process ?");
+  if (approve){
+  location.reload()
+  }
+}
+}
+
 //#####
 //Function after Delete Clicked
 deleteClicked = false;
 function btnDelClick(clicked_id){
-  var approve = window.approve('Do You Want To Delete This Meeing ?')
+  var approve = window.confirm('Do You Want To Delete This Meeing ?')
   if (approve){
-    
+    document.getElementById(clicked_id).style.display = 'none';
+    document.getElementById(clicked_id+'Confirm').style.display = 'inline-block';
   }
 }
+
+//EMAIL VALIDATION IN JS
+function emailValid(){
+  email = document.getElementById('email').value
+  if (!email.includes('@')){
+    document.getElementById('error').style.display ='inline-block';
+    document.getElementById('error').innerHTML = ' ! ';
+  }
+  else{
+    document.getElementById('error').innerHTML = '';
+    document.getElementById('error').style.display ='none';
+  }
+}
+
+//###############################
 
 
 //Function to display Meeting CountDown Time
