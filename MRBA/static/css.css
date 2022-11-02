@@ -118,7 +118,6 @@ label{
 }
 .navBar{
   margin:5px;
-    /* border: 5px solid #00000031; */
 }
 #dayPicker{
     text-align:center;
@@ -129,7 +128,7 @@ label{
 }
 #endTime, #startTime{
     text-align: center;
-    width:105px; height:22px;
+    height:22px;
 }
 .roomDisplay{
     border-radius: 5px;
@@ -147,6 +146,7 @@ label{
     margin: 10px;
     padding: 3px;
     height: 100vh;
+    overflow: hidden;
 
 } 
 .menuHeader{
@@ -172,23 +172,29 @@ label{
     
 }
 .dashRoomDisp{
+  border-radius: 5px;
+    text-align: left;
     padding: 10px 30px;
     margin-top: 20px;
-    background-color: #9dff00;
+    background-color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
 }
 
 /* ADMIN ROOM */
 .adminRoomView{
-    border-radius: 5px;
-    padding: 1px;
-    margin-top: 30px;
-    background-color: #9dff00;
+     padding: 2px 2px;
+  
+   
 }
 .adminform{
-    /* vertical-align: middle; */
+    border-radius: 5px;
     text-align: left;
-    padding: 20px;
-    border: 1px solid black;
+    padding: 10px 30px;
+    margin: 20px;
+    background-color: rgba(255, 255, 255, 0.4);
+    opacity: 1;
+    /* vertical-align: middle; */
+   
 }
 
 /* ####### */
@@ -216,7 +222,7 @@ label{
     left: 0;
     width: 100%;
     height: 100%;
-    font-size: 12px;
+    font-size: 13px;
     font-family: sans-serif;
     transition: all 1s ease-in-out;
     overflow: hidden;
@@ -234,7 +240,9 @@ label{
     height: 100%;
     width: 100%;
     color: #4d4d4d;
-    background-color: #f19999;
+    border-radius: 5px;
+    border: 1px solid #cbd45541;
+    background-color: #ccd455;
     transition: all 1s ease-in-out;
   }
 
@@ -249,7 +257,9 @@ label{
     height: 100%;
     width: 100%;
     color: #000000;
-    background-color: #32e1e1;
+    border-radius: 5px;
+    border: 1px solid #76d7da27;
+    background-color: #76d7da;
     text-align: center;
     transition: all 1s ease-in-out;
   }
@@ -266,13 +276,15 @@ label{
 .btn-primary{
   background-color: #4e98ad !important;
 }
-.bookedDisplay{
-  border-radius:5px; 
-  border:1px solid black; 
-  color:white; 
-  background-color:green; 
-  padding: 3px;
+
+.activity_light{
+  background-color: #00ff2a;
+  animation: myanimation 5s infinite; 
 }
+@keyframes myanimation {
+  50% {background-color:#ffffff;}
+}
+
 #resetPasswordLink{
   color:#e6817f;
   font-size: 15px;
@@ -346,9 +358,58 @@ label{
 }
 .PassResetLinkButton{
   background-color: #ffffff;
-  border: 2px solid #b4b4b4;
+  border: none !important;
   border-radius: 5px;
   margin-top: 5px;
   float: right;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+.roomDelButton,.confirmDelButton{
+  border-radius: 5px;
+  border: 1px solid #9e6c4a;
+  color: white;
+  background-color: #b83535;
+  font-family: sans-serif;
+  /* font-size: 13px; */
+  /* font-family: sans-serif; */
+
+}
+.bookedDisplay{
+  border-radius: 5px;
+  /* border: 1px solid #37b868; */
+  /* background-color: #2c9253; */
+  font-family: sans-serif;
+  /* animation: myanimation 5s infinite; */
+}
+.submitBtn{
+  border-radius: 5px;
+  border: 1px solid #37b868;
+  color: white;
+  background-color: #2c9253;
+  font-family: sans-serif;
+}
+.btnCancel, .btnConfirmCancel{
+  border-radius: 5px;
+  border: 1px solid #1d3e68;
+  color: white;
+  background-color: #356eb8;
+  font-family: sans-serif;
+}
+
+
+
+/* //////////////////////// */
+.waviy span {
+  margin:none !important;
+  padding: none !important;
+  display: inline-block;
+  color: rgb(2, 2, 2);
+  animation: flip 2s infinite;
+  animation-delay: calc(.4s * var(--i))
+}
+@keyframes flip {
+  0%,80% {
+    transform: rotateZ(360deg)
+  }
+}
+/* ///////////////////////// */

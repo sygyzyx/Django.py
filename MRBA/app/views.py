@@ -47,6 +47,7 @@ def LoginView(request):
     
 
 def Dashboard(request):
+    admin = False
     room = RoomForm()
     today = datetime.today()
     tomorrow = datetime.today() + timedelta(days=1)
@@ -61,7 +62,7 @@ def Dashboard(request):
         'room':room, 
         'bookedrooms':bookedrooms, 
         'user':user
-    }
+                }
         return render(request, 'dashboard.html', contex)
     context = {'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow,'admin':admin}
     if request.user.is_anonymous:
@@ -204,7 +205,7 @@ def BookRoom(request):
 def roomView(request):
     user = request.user
     userRoom = Room.objects.filter(room_booked_by_user = user)
-    adminRoom = Room.objects.all()
+    adminRoom = Room.objects.all().order_by('room_book_date')
     if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
         admin = True
         contex = {
