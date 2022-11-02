@@ -3,6 +3,7 @@
 {% block yourRoomButton %}Your Room{% endblock yourRoomButton %}
 
 {% block body %}
+{% load static %}
 <!--Room Search Area-->
 <div class="dashContainer">
 <div class="dashMenu">
@@ -47,8 +48,8 @@
           <label for="appt">End Time:</label>
       <input type="time" id="endTime" name="endTime" required>
         </div>
-        <div class="col">
-          <button type='Submit'>Search</button>
+        <div class="col mt-4">
+          <button type='Submit' id='SearchBtn'>Search<img src="{%static 'searchbtn.png'%}" alt="search" width="15" height="15" style="margin-left:2px;"></button>
         </div>
       </div>
   </form>
@@ -82,7 +83,7 @@
     {% if bookedrooms %}
     <h3>Displaying Booked Rooms for Today</h3>
     {% for i in bookedrooms %}
-    <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+    <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
     {% endfor %}
     {% else %}
     <h3>No Room Bookings For Today</h3>
@@ -92,7 +93,7 @@
     {% if bookedroomsTomorrow %}
     <h3>Displaying Booked Rooms for Tomorrow</h3>
     {% for i in bookedroomsTomorrow %}
-    <li>{{ i.room_Name }} from {{i.meeting_start_time}} to {{i.meeting_end_time}} by {{i.room_booked_by_user}}</li>
+    <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
     {% endfor %}
     </div>
     {% else %}

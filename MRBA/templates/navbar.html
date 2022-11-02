@@ -67,11 +67,11 @@
           </ul>
           
         {% if user.is_authenticated %}
-        <span class="navbar-text">
+        <span>
           Welcome, {{request.user.username}}
         </span>
         <a href="Signout">
-        <button class="btn btn-danger m-2">Log Out</button></a>  
+        <button class="btn btn-danger m-2">Logout<img src="{%static 'logout.png'%}" alt="search" width="17" height="17" style="margin-left:5px;"></button></a>  
         {% else %}
         {% endif %}
         </div>

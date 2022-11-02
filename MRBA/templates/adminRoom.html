@@ -32,35 +32,53 @@
         <input type="hidden" class="roomIdValue" id="value" name="value" value="{{i.id}}">
         <input type="hidden" class="grantMeetingValue" id="boolValue" name="boolValue" value="{{i.grant_meeting}}">
         {{i.room_Name}} at
-        {{i.meeting_start_time}} to {{i.meeting_end_time}} on Date {{i.room_book_date}}
+        {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} on {{i.room_book_date|date:'d M l'}}
         by {{i.room_booked_by_user}}
         | Room Status |
         <label class="toggle">
           <input type="checkbox">
           <span class="labels" onclick="setTimeout(spanClick.bind(null,this.id),500);" data-on="Approved" data-off="Pending"></span>
         </label>
-        <div id="" style="display:none;" class="btnSubmitId"><button>Submit</button></div>
+        <div id="" style="display:none;" class="btnSubmitId"><button class='submitBtn'>Submit</button></div>
       </form>
       {% comment %} EDIT BUTTON {% endcomment %}
       {% comment %} <a href ="{% url 'editRoom' i.id %}" class = "btn btn-success">Edit</a> {% endcomment %}
       {% if i.grant_meeting %}
-      <label class="bookedDisplay">Booked</label>
+      <label class="bookedDisplay">
+        <div class="waviy">
+          <span style="--i:1">B</span>
+          <span style="--i:2">o</span>
+          <span style="--i:3">o</span>
+          <span style="--i:4">k</span>
+          <span style="--i:5">e</span>
+          <span style="--i:6">d</span>
+         </div>
+        {% comment %} <div class="activity_light" style="border-radius: 100px;
+            height: 12px;
+            width: 12px;
+            -webkit-filter: blur(2px);
+            -moz-filter: blur(2px);
+            -o-filter: blur(2px);
+            -ms-filter: blur(2px);
+            filter: blur(2px);"></div>
+           {% endcomment %}
+      </label> 
       |
       {% else %}
       {% endif %}
-      <div id="" style="display:inline;" class="btnDelId" onclick="btnDelClick(this.id)"><button>Delete</button></div>
+      <div id="" style="display:inline;" class="btnDelId" onclick="btnDelClick(this.id)"><button class='roomDelButton'>Delete</button></div>
       <a href ="{%url 'deleteRoom' i.id %}">
-        <div id='roomDeleteButton' style="display:none;" class="btnDelConfirm" onclick="btnDelClick(this.id)"><button>Confirm Deletion</button></div>
+        <div id='roomDeleteButton' style="display:none;" class="btnDelConfirm"><button class = "confirmDelButton">Confirm Deletion</button></div>
       </a>
-      <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)"><button>Cancel</button></div>
+      <div id="" style="display:none;" class="btnCancelId" onclick="btnCancelClick(this.id)" ><button class ='btnCancel'>Cancel</button></div>
       <a href={% url 'cancelbook' i.id %}>
-        <div id="" style="display:none;" class="btnCancelIdConfirm"><button type="Submit" onclick="btnCancelClick()">Confirm Cancel</button></div>
+        <div id="" style="display:none;" class="btnCancelIdConfirm"><button type="Submit" class = 'btnConfirmCancel'>Confirm Cancel</button></div>
       </a>
     </div>
     {% endfor %}
   </div>
     {% else %}
-    <h3>No Booked Rooms Today</h3>
+    <h3>No Bookings Are Done</h3>
     {% endif %}
 
 </div>
