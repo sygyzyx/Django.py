@@ -23,8 +23,8 @@ def Index(request):
     room = RoomForm()
     today = datetime.today()
     tomorrow = datetime.today() + timedelta(days=1)
-    bookedrooms = Room.objects.all().filter(room_book_date = today)
-    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
+    bookedrooms = (Room.objects.all().filter(room_book_date = today) & Room.objects.filter(grant_meeting=True))
+    bookedroomsTomorrow = (Room.objects.all().filter(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
     context = {'room':room, 'bookedrooms':bookedrooms,'bookedroomsTomorrow':bookedroomsTomorrow}
     if request.user.is_authenticated:
         return redirect('dashboard')
