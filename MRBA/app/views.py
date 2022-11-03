@@ -51,8 +51,8 @@ def Dashboard(request):
     room = RoomForm()
     today = datetime.today()
     tomorrow = datetime.today() + timedelta(days=1)
-    bookedrooms = Room.objects.all().filter(room_book_date = today)
-    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
+    bookedrooms = (Room.objects.all().filter(room_book_date = today) & Room.objects.filter(grant_meeting=True))
+    bookedroomsTomorrow = (Room.objects.all().filter(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
     user = request.user
     if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
         admin = True
@@ -142,15 +142,27 @@ def Status(request):
         session_end_time = datetime.strptime(request.POST.get('endTime'), "%H:%M").time()
         session_endStrf_time = int(session_end_time.strftime("%H%M"))
         #from the input field in index.html we only take HOUR and MINUTES so "%H:%M"yyyyyyy
-        if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):    
-            meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
-            for i in meetingTimeRange:
+        if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):   
+            values = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time','grant_meeting')
+            for i in values:
                 meeting_start_time = int(i[0].strftime("%H%M"))
                 meeting_end_time = int(i[1].strftime("%H%M"))
-                if session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time):         
+                grant_meet_value = i[2]
+                if session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time):
                     #or condition for 'meeting_end_time' not so necessary
-                    messages.error(request, 'Sorry This room is Booked')
-                    return redirect('dashboard')
+                    if grant_meet_value == True:
+                        messages.error(request, 'Sorry This room is Booked')
+                        return redirect('dashboard')
+                    else:
+                        availability = True
+                        messages.success(request, 'Room available')
+                        roomName = Room_Name.objects.get(id = room_id)
+                        user = request.user
+                        context = {'availability' : availability, 'roomName':roomName, 'Date': date, 'bookStartTime':session_start_time, 'bookEndTime': session_end_time,'User': user , 'room': room }
+                        if request.user.is_anonymous:
+                            return render(request,'index.html', context)
+                        else:
+                            return render(request,'dashboard.html', context)
             else:
                 availability = True
                 messages.success(request, 'Room available')
