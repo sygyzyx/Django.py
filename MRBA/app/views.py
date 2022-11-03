@@ -210,7 +210,7 @@ def BookRoom(request):
         user = request.user
         bookRoom = Room.objects.create(room_Name_id = room_id,room_book_date = date, meeting_start_time = result_StartTime_time, meeting_end_time= result_EndTime_time, room_booked_by_user= user )
         bookRoom.save()
-        messages.success(request, 'You Have Booked a room')
+        messages.success(request, 'You Have Booked a Room. Wait for admin Approval')
         return redirect('dashboard')
 
 
@@ -328,13 +328,30 @@ def editRoomView(request, id):
 
 
 def grantMeetView(request):
+    # import ipdb
+    # ipdb.set_trace()
     if request.method == 'POST':
         roomId = request.POST.get('value')
-        meetStartTime = request.POST.get('meetStartTime')
-        meetEndTime = request.POST.get('meetEndTime')
+        roomIdValue = int(roomId)
         room = Room.objects.get(id=roomId)
-        room.grant_meeting = True
-        room.save()
+        timeRange = Room.objects.all().values_list('meeting_start_time','meeting_end_time','id')
+        session_start_time = room.meeting_start_time
+        session_startStrf_time = int(session_start_time.strftime("%H%M"))
+        session_end_time = room.meeting_end_time
+        session_endStrf_time = int(session_end_time.strftime("%H%M"))
+        for i in timeRange:
+            meeting_start_time = int(i[0].strftime("%H%M"))
+            meeting_end_time = int(i[1].strftime("%H%M"))
+            id = i[2]
+            if meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time) or session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time):
+                if roomIdValue == id:
+                    room.grant_meeting = True
+                    room.save()
+                    # messages.success(request, 'Room Granted')
+                    # return redirect('room')
+                else:
+                    room = Room.objects.get(id=id)
+                    room.delete()
         messages.success(request, 'Room Granted')
         return redirect('room')
 
