@@ -334,7 +334,7 @@ def grantMeetView(request):
         roomId = request.POST.get('value')
         roomIdValue = int(roomId)
         room = Room.objects.get(id=roomId)
-        timeRange = Room.objects.all().values_list('meeting_start_time','meeting_end_time','id')
+        timeRange = Room.objects.all().values_list('meeting_start_time','meeting_end_time','id','room_booked_by_user')
         session_start_time = room.meeting_start_time
         session_startStrf_time = int(session_start_time.strftime("%H%M"))
         session_end_time = room.meeting_end_time
@@ -342,16 +342,34 @@ def grantMeetView(request):
         for i in timeRange:
             meeting_start_time = int(i[0].strftime("%H%M"))
             meeting_end_time = int(i[1].strftime("%H%M"))
-            id = i[2]
+            DelId = int(i[2])
+            userID = i[3]
+            user = User.objects.get(id=userID)
             if meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time) or session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time):
-                if roomIdValue == id:
+                if roomIdValue == DelId:
+                    subject = 'Time For Your Meeting Has Been Approved'
+                    message = render_to_string('template_approved_booking_mail.html', {
+                                        'domain': get_current_site(request).domain,
+                                        'protocol': 'https' if request.is_secure() else 'http'
+                                    })
+                    email_from = settings.EMAIL_HOST_USER
+                    recipient_list = [user.email,]
+                    send_mail( subject, message, email_from, recipient_list )
                     room.grant_meeting = True
                     room.save()
                     # messages.success(request, 'Room Granted')
                     # return redirect('room')
                 else:
-                    room = Room.objects.get(id=id)
-                    room.delete()
+                    subject = 'Your Booked Meeting Was Cancelled'
+                    message = render_to_string('template_cancelled_booking_mail.html', {
+                                        'domain': get_current_site(request).domain,
+                                        'protocol': 'https' if request.is_secure() else 'http'
+                                    })
+                    email_from = settings.EMAIL_HOST_USER
+                    recipient_list = [user.email,]
+                    send_mail( subject, message, email_from, recipient_list )
+                    roomDel = Room.objects.get(id=DelId)
+                    roomDel.delete()
         messages.success(request, 'Room Granted')
         return redirect('room')
 
