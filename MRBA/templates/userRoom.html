@@ -31,8 +31,9 @@
 <input type="hidden" class="grantMeetBool" value={{i.grant_meeting}}>
 <a href ="{% url 'editRoom' i.id %}" class="EditButtonUser"><Button>Edit</Button></a> 
 <a href ="{%url 'deleteRoom' i.id %}" style="float: right;"><button>Delete Booking</button></a>
-<br>
+
 </li>
+<br>
 </form>
 {% endfor %}
 {% else %}

@@ -17,19 +17,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model
 from .tokens import *
-
-
-def Index(request):
-    room = RoomForm()
-    today = datetime.today()
-    tomorrow = datetime.today() + timedelta(days=1)
-    bookedrooms = Room.objects.all().filter(room_book_date = today)
-    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
-    context = {'room':room, 'bookedrooms':bookedrooms,'bookedroomsTomorrow':bookedroomsTomorrow}
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    else:
-        return render(request, 'index.html', context)
+from django.core.paginator import Paginator
 
 
 def LoginView(request):
@@ -46,27 +34,62 @@ def LoginView(request):
             return redirect('/')
     
 
+def Index(request):
+    room = RoomForm()
+    today = datetime.today()
+    tomorrow = datetime.today() + timedelta(days=1)
+    #Paginator
+    bookedrooms = (Room.objects.all().filter(room_book_date = today) & Room.objects.filter(grant_meeting=True))
+    bookedroomsTomorrow = (Room.objects.all().filter(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
+    bookedroomsAfterTomorrow = (Room.objects.all().exclude(room_book_date = today) & Room.objects.all().exclude(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
+    todayBookedRoomsPaginator = Paginator(bookedrooms, 5)
+    tomorrowBookedRoomsPaginator = Paginator(bookedroomsTomorrow, 5)
+    afterTomorrowBookedRoomsPaginator = Paginator(bookedroomsAfterTomorrow, 5)
+    page = request.GET.get('page')
+    pageTomorrow = request.GET.get('pageTomorrow')
+    todayRoomPage = todayBookedRoomsPaginator.get_page(page)
+    tomorrowRoomPage = tomorrowBookedRoomsPaginator.get_page(pageTomorrow)
+    afterTomorrowRoom = afterTomorrowBookedRoomsPaginator.get_page(page)
+    context = {'room':room, 'bookedrooms':bookedrooms,'bookedroomsTomorrow':bookedroomsTomorrow,'todayRoomPage':todayRoomPage, 'tomorrowRoomPage':tomorrowRoomPage}
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        return render(request, 'index.html', context)
+
+
 def Dashboard(request):
     admin = False
     room = RoomForm()
     today = datetime.today()
     tomorrow = datetime.today() + timedelta(days=1)
-    bookedrooms = Room.objects.all().filter(room_book_date = today)
-    bookedroomsTomorrow = Room.objects.all().filter(room_book_date = tomorrow)
     user = request.user
+    #Paginator
+    bookedrooms = (Room.objects.all().filter(room_book_date = today) & Room.objects.filter(grant_meeting=True))
+    bookedroomsTomorrow = (Room.objects.all().filter(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
+    bookedroomsAfterTomorrow = (Room.objects.all().exclude(room_book_date = today) & Room.objects.all().exclude(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
+    todayBookedRoomsPaginator = Paginator(bookedrooms, 5)
+    tomorrowBookedRoomsPaginator = Paginator(bookedroomsTomorrow, 5)
+    afterTomorrowBookedRoomsPaginator = Paginator(bookedroomsAfterTomorrow, 5)
+    page = request.GET.get('page')
+    pageTomorrow = request.GET.get('pageTomorrow')
+    todayRoomPage = todayBookedRoomsPaginator.get_page(page)
+    tomorrowRoomPage = tomorrowBookedRoomsPaginator.get_page(pageTomorrow)
+    afterTomorrowRoom = afterTomorrowBookedRoomsPaginator.get_page(page)
     if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
         admin = True
         contex = {
+        'todayRoomPage':todayRoomPage,
+        'tomorrowRoomPage':tomorrowRoomPage,
         'admin':admin,
-        'bookedroomsTomorrow':bookedroomsTomorrow,
         'room':room, 
-        'bookedrooms':bookedrooms, 
         'user':user
                 }
         return render(request, 'dashboard.html', contex)
-    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow,'admin':admin}
+
     if request.user.is_anonymous:
         return redirect('index')
+
+    context = {'todayRoomPage':todayRoomPage,'tomorrowRoomPage':tomorrowRoomPage,'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow, 'admin':admin}
     return render(request, 'dashboard.html', context)
 
 
@@ -142,15 +165,27 @@ def Status(request):
         session_end_time = datetime.strptime(request.POST.get('endTime'), "%H:%M").time()
         session_endStrf_time = int(session_end_time.strftime("%H%M"))
         #from the input field in index.html we only take HOUR and MINUTES so "%H:%M"yyyyyyy
-        if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):    
-            meetingTimeRange = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time')
-            for i in meetingTimeRange:
+        if Room.objects.filter(room_Name_id = room_id) & Room.objects.filter(room_book_date = date):   
+            values = (Room.objects.filter(room_Name_id=room_id) & Room.objects.filter(room_book_date = date)).values_list('meeting_start_time','meeting_end_time','grant_meeting')
+            for i in values:
                 meeting_start_time = int(i[0].strftime("%H%M"))
                 meeting_end_time = int(i[1].strftime("%H%M"))
-                if session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time):         
+                grant_meet_value = i[2]
+                if session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time) or meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time):
                     #or condition for 'meeting_end_time' not so necessary
-                    messages.error(request, 'Sorry This room is Booked')
-                    return redirect('dashboard')
+                    if grant_meet_value == True:
+                        messages.error(request, 'Sorry This room is Booked')
+                        return redirect('dashboard')
+                    else:
+                        availability = True
+                        messages.success(request, 'Room available')
+                        roomName = Room_Name.objects.get(id = room_id)
+                        user = request.user
+                        context = {'availability' : availability, 'roomName':roomName, 'Date': date, 'bookStartTime':session_start_time, 'bookEndTime': session_end_time,'User': user , 'room': room }
+                        if request.user.is_anonymous:
+                            return render(request,'index.html', context)
+                        else:
+                            return render(request,'dashboard.html', context)
             else:
                 availability = True
                 messages.success(request, 'Room available')
@@ -198,7 +233,7 @@ def BookRoom(request):
         user = request.user
         bookRoom = Room.objects.create(room_Name_id = room_id,room_book_date = date, meeting_start_time = result_StartTime_time, meeting_end_time= result_EndTime_time, room_booked_by_user= user )
         bookRoom.save()
-        messages.success(request, 'You Have Booked a room')
+        messages.success(request, 'You Have Booked a Room. Wait for admin Approval')
         return redirect('dashboard')
 
 
@@ -316,13 +351,48 @@ def editRoomView(request, id):
 
 
 def grantMeetView(request):
+    # import ipdb
+    # ipdb.set_trace()
     if request.method == 'POST':
         roomId = request.POST.get('value')
-        meetStartTime = request.POST.get('meetStartTime')
-        meetEndTime = request.POST.get('meetEndTime')
+        roomIdValue = int(roomId)
         room = Room.objects.get(id=roomId)
-        room.grant_meeting = True
-        room.save()
+        timeRange = Room.objects.all().values_list('meeting_start_time','meeting_end_time','id','room_booked_by_user')
+        session_start_time = room.meeting_start_time
+        session_startStrf_time = int(session_start_time.strftime("%H%M"))
+        session_end_time = room.meeting_end_time
+        session_endStrf_time = int(session_end_time.strftime("%H%M"))
+        for i in timeRange:
+            meeting_start_time = int(i[0].strftime("%H%M"))
+            meeting_end_time = int(i[1].strftime("%H%M"))
+            DelId = int(i[2])
+            userID = i[3]
+            user = User.objects.get(id=userID)
+            if meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time) or session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time):
+                if roomIdValue == DelId:
+                    subject = 'Time For Your Meeting Has Been Approved'
+                    message = render_to_string('template_approved_booking_mail.html', {
+                                        'domain': get_current_site(request).domain,
+                                        'protocol': 'https' if request.is_secure() else 'http'
+                                    })
+                    email_from = settings.EMAIL_HOST_USER
+                    recipient_list = [user.email,]
+                    send_mail( subject, message, email_from, recipient_list )
+                    room.grant_meeting = True
+                    room.save()
+                    # messages.success(request, 'Room Granted')
+                    # return redirect('room')
+                else:
+                    subject = 'Your Booked Meeting Was Cancelled'
+                    message = render_to_string('template_cancelled_booking_mail.html', {
+                                        'domain': get_current_site(request).domain,
+                                        'protocol': 'https' if request.is_secure() else 'http'
+                                    })
+                    email_from = settings.EMAIL_HOST_USER
+                    recipient_list = [user.email,]
+                    send_mail( subject, message, email_from, recipient_list )
+                    roomDel = Room.objects.get(id=DelId)
+                    roomDel.delete()
         messages.success(request, 'Room Granted')
         return redirect('room')
 
