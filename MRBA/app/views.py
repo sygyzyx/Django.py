@@ -357,7 +357,7 @@ def grantMeetView(request):
         roomId = request.POST.get('value')
         roomIdValue = int(roomId)
         room = Room.objects.get(id=roomId)
-        timeRange = Room.objects.all().values_list('meeting_start_time','meeting_end_time','id','room_booked_by_user')
+        timeRange = Room.objects.all().values_list('meeting_start_time','meeting_end_time','id','room_booked_by_user','room_book_date')
         session_start_time = room.meeting_start_time
         session_startStrf_time = int(session_start_time.strftime("%H%M"))
         session_end_time = room.meeting_end_time
@@ -365,13 +365,20 @@ def grantMeetView(request):
         for i in timeRange:
             meeting_start_time = int(i[0].strftime("%H%M"))
             meeting_end_time = int(i[1].strftime("%H%M"))
+            startTime = i[0]
+            endTime = i[1]
             DelId = int(i[2])
             userID = i[3]
+            date = i[4]
             user = User.objects.get(id=userID)
             if meeting_start_time in range(session_startStrf_time,session_endStrf_time) or meeting_end_time in range(session_startStrf_time,session_endStrf_time) or session_startStrf_time in range(meeting_start_time,meeting_end_time) or session_endStrf_time in range(meeting_start_time,meeting_end_time):
                 if roomIdValue == DelId:
                     subject = 'Time For Your Meeting Has Been Approved'
                     message = render_to_string('template_approved_booking_mail.html', {
+                                        'user':user.first_name,
+                                        'date':date,
+                                        'meeting_start_time':startTime,
+                                        'meeting_end_time':endTime,
                                         'domain': get_current_site(request).domain,
                                         'protocol': 'https' if request.is_secure() else 'http'
                                     })
