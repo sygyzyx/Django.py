@@ -43,9 +43,21 @@
       {% else %}
         {% if bookedrooms %}
         <h3>Displaying Booked Rooms for Today</h3>
-        {% for i in bookedrooms %}
+        {% for i in todayRoomPage %}
         <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
+
+        { Page {{todayRoomPage.number}} of {{todayRoomPage.paginator.num_pages}} }
+
+        {% if todayRoomPage.has_previous %}
+        <a href="?page=1">&laquo First</a>
+        <a href="?page={{todayRoomPage.previous_page_number}}">Previous</a>
+        {% endif %}
+        {% if todayRoomPage.has_next %}
+        <a href="?page={{todayRoomPage.next_page_number}}">Next</a>
+        <a href="?page={{todayRoomPage.paginator.num_pages}}">Last &raquo</a>  
+        {% endif %}
+
         {% else %}
         <h3 style='text-align:left;'>No Bookings For Today</h3>
         {% endif %}
@@ -53,9 +65,21 @@
     <div class="roomDisplay">
         {% if bookedroomsTomorrow %}
         <h3>Displaying Booked Rooms for Tomorrow</h3>
-        {% for i in bookedroomsTomorrow %}
+        {% for i in tomorrowRoomPage %}
         <li>{{ i.room_Name }} from {{i.meeting_start_time|date:"h:i A"}} to {{i.meeting_end_time|date:"h:i A"}} by {{i.room_booked_by_user}}</li>
         {% endfor %}
+
+        { Page {{tomorrowRoomPage.number}} of {{tomorrowRoomPage.paginator.num_pages}} }
+
+        {% if tomorrowRoomPage.has_previous %}
+        <a href="?pageTomorrow=1">&laquoFirst</a>
+        <a href="?pageTomorrow={{tomorrowRoomPage.previous_page_number}}">Previous</a>
+        {% endif %}
+        {% if tomorrowRoomPage.has_next %}
+        <a href="?pageTomorrow={{tomorrowRoomPage.next_page_number}}">Next</a>
+        <a href="?pageTomorrow={{tomorrowRoomPage.paginator.num_pages}}">Last&raquo</a>
+        {% endif %}
+
         {% else %}
         <h3 style='text-align:left;'>No Bookings For Tomorrow</h3>
         {% endif %}     

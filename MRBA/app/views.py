@@ -17,19 +17,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model
 from .tokens import *
-
-
-def Index(request):
-    room = RoomForm()
-    today = datetime.today()
-    tomorrow = datetime.today() + timedelta(days=1)
-    bookedrooms = (Room.objects.all().filter(room_book_date = today) & Room.objects.filter(grant_meeting=True))
-    bookedroomsTomorrow = (Room.objects.all().filter(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
-    context = {'room':room, 'bookedrooms':bookedrooms,'bookedroomsTomorrow':bookedroomsTomorrow}
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    else:
-        return render(request, 'index.html', context)
+from django.core.paginator import Paginator
 
 
 def LoginView(request):
@@ -46,27 +34,62 @@ def LoginView(request):
             return redirect('/')
     
 
+def Index(request):
+    room = RoomForm()
+    today = datetime.today()
+    tomorrow = datetime.today() + timedelta(days=1)
+    #Paginator
+    bookedrooms = (Room.objects.all().filter(room_book_date = today) & Room.objects.filter(grant_meeting=True))
+    bookedroomsTomorrow = (Room.objects.all().filter(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
+    bookedroomsAfterTomorrow = (Room.objects.all().exclude(room_book_date = today) & Room.objects.all().exclude(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
+    todayBookedRoomsPaginator = Paginator(bookedrooms, 5)
+    tomorrowBookedRoomsPaginator = Paginator(bookedroomsTomorrow, 5)
+    afterTomorrowBookedRoomsPaginator = Paginator(bookedroomsAfterTomorrow, 5)
+    page = request.GET.get('page')
+    pageTomorrow = request.GET.get('pageTomorrow')
+    todayRoomPage = todayBookedRoomsPaginator.get_page(page)
+    tomorrowRoomPage = tomorrowBookedRoomsPaginator.get_page(pageTomorrow)
+    afterTomorrowRoom = afterTomorrowBookedRoomsPaginator.get_page(page)
+    context = {'room':room, 'bookedrooms':bookedrooms,'bookedroomsTomorrow':bookedroomsTomorrow,'todayRoomPage':todayRoomPage, 'tomorrowRoomPage':tomorrowRoomPage}
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        return render(request, 'index.html', context)
+
+
 def Dashboard(request):
     admin = False
     room = RoomForm()
     today = datetime.today()
     tomorrow = datetime.today() + timedelta(days=1)
+    user = request.user
+    #Paginator
     bookedrooms = (Room.objects.all().filter(room_book_date = today) & Room.objects.filter(grant_meeting=True))
     bookedroomsTomorrow = (Room.objects.all().filter(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
-    user = request.user
+    bookedroomsAfterTomorrow = (Room.objects.all().exclude(room_book_date = today) & Room.objects.all().exclude(room_book_date = tomorrow) & Room.objects.filter(grant_meeting=True))
+    todayBookedRoomsPaginator = Paginator(bookedrooms, 5)
+    tomorrowBookedRoomsPaginator = Paginator(bookedroomsTomorrow, 5)
+    afterTomorrowBookedRoomsPaginator = Paginator(bookedroomsAfterTomorrow, 5)
+    page = request.GET.get('page')
+    pageTomorrow = request.GET.get('pageTomorrow')
+    todayRoomPage = todayBookedRoomsPaginator.get_page(page)
+    tomorrowRoomPage = tomorrowBookedRoomsPaginator.get_page(pageTomorrow)
+    afterTomorrowRoom = afterTomorrowBookedRoomsPaginator.get_page(page)
     if User.objects.filter(username=user) & User.objects.filter(is_staff=True):
         admin = True
         contex = {
+        'todayRoomPage':todayRoomPage,
+        'tomorrowRoomPage':tomorrowRoomPage,
         'admin':admin,
-        'bookedroomsTomorrow':bookedroomsTomorrow,
         'room':room, 
-        'bookedrooms':bookedrooms, 
         'user':user
                 }
         return render(request, 'dashboard.html', contex)
-    context = {'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow,'admin':admin}
+
     if request.user.is_anonymous:
         return redirect('index')
+
+    context = {'todayRoomPage':todayRoomPage,'tomorrowRoomPage':tomorrowRoomPage,'room':room, 'bookedrooms':bookedrooms, 'user':user,'bookedroomsTomorrow':bookedroomsTomorrow, 'admin':admin}
     return render(request, 'dashboard.html', context)
 
 
